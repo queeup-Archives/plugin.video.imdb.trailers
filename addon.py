@@ -5,7 +5,7 @@ Debug = True
 
 # Imports
 import re, urllib, urllib2, base64, simplejson, BeautifulSoup
-import md5, os, shutil, tempfile, time, errno
+import hashlib, os, shutil, tempfile, time, errno
 import xbmc, xbmcgui, xbmcplugin, xbmcaddon
 
 __addon__ = xbmcaddon.Addon(id='plugin.video.imdb.trailers')
@@ -48,7 +48,7 @@ class Main:
       self.MainMenu()
 
   def MainMenu(self):
-    if Debug: self.LOG('MainMenu')
+    if Debug: self.LOG('MainMenu()')
     category = [{'title':__language__(30201), 'key':'top_hd'},
                 {'title':__language__(30202), 'key':'recent'},
                 {'title':__language__(30203), 'key':'popular'}]
@@ -62,7 +62,7 @@ class Main:
     xbmcplugin.endOfDirectory(int(sys.argv[1]), True)
 
   def VideoList(self):
-    if Debug: self.LOG('VideoList')
+    if Debug: self.LOG('VideoList()')
     try:
       token = self.Arguments('token')
     except:
@@ -123,7 +123,7 @@ class Main:
     xbmcplugin.endOfDirectory(int(sys.argv[1]), True)
 
   def getVideoURL(self):
-    if Debug: self.LOG('getVideoURL')
+    if Debug: self.LOG('getVideoURL()')
     getformat = __settings__("video_quality")
     if getformat == '0': format = '240p'
     if getformat == '1': format = '480p'
@@ -139,7 +139,7 @@ class Main:
     return videoUrl
 
   def Play(self):
-    if Debug: self.LOG('Play')
+    if Debug: self.LOG('Play()')
     title = unicode(xbmc.getInfoLabel("ListItem.Title"), "utf-8")
     thumbnail = xbmc.getInfoImage("ListItem.Thumb")
     plot = unicode(xbmc.getInfoLabel("ListItem.Plot"), "utf-8")
@@ -204,7 +204,7 @@ class Main:
     return urllib.unquote_plus(Arguments[arg])
 
   def LOG(self, description):
-    xbmc.log("[ADD-ON] '%s v%s': '%s'" % (__plugin__, __version__, description), xbmc.LOGNOTICE)
+    xbmc.log("[ADD-ON] '%s v%s': %s" % (__plugin__, __version__, description), xbmc.LOGNOTICE)
 
 class DiskCacheFetcher:
   def __init__(self, cache_dir=None):
@@ -227,8 +227,7 @@ class DiskCacheFetcher:
 
   def fetch(self, url, max_age=0):
     # Use MD5 hash of the URL as the filename
-    print url
-    filename = md5.new(url).hexdigest()
+    filename = hashlib.md5(url).hexdigest()
     filepath = os.path.join(self.cache_dir, filename)
     if os.path.exists(filepath):
       if int(time.time()) - os.path.getmtime(filepath) < max_age:

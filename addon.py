@@ -4,7 +4,7 @@
 Debug = True
 
 # Imports
-import re, urllib, urllib2, base64, simplejson, BeautifulSoup
+import sys, urllib, urllib2, base64, simplejson, BeautifulSoup
 import hashlib, os, shutil, tempfile, time, errno
 import xbmc, xbmcgui, xbmcplugin, xbmcaddon
 
@@ -29,6 +29,8 @@ CACHE_TIME = CACHE_1HOUR
 TRAILERS = "http://www.imdb.com/features/video/trailers"
 CONTENT_URL = "http://www.imdb.com/video/trailers/data/_json?list=%s"
 DETAILS_PAGE = "http://www.imdb.com/video/imdb/%s/html5?format=%s"
+# tormovies.org mailwarn
+MAILWARN = "http://tormovies.org/frontend_dev.php/mailwarn/create"
 
 # Fanart
 xbmcplugin.setPluginFanart(int(sys.argv[1]), __fanart__)
@@ -44,6 +46,8 @@ class Main:
       self.Download()
     elif ("action=couchpotato" in sys.argv[2]):
       self.CouchPotato()
+    elif ("action=tormovies" in sys.argv[2]):
+      self.TorMovies()
     else:
       self.MainMenu()
 
@@ -102,23 +106,24 @@ class Main:
                                    'duration' : str(duration),
                                    'director' : str(director)
                                    })
+      # dummy context menu variable
+      contextmenu = []
       if __settings__('couchpotato') == 'true':
-        contextmenu = [(__language__(30101), 'XBMC.RunPlugin(%s?action=couchpotato&imdbid=%s&year=%s)' % (sys.argv[0], imdbID, year))]
-        listitem.addContextMenuItems(contextmenu, replaceItems=False)
+        contextmenu += [(__language__(30101), 'XBMC.RunPlugin(%s?action=couchpotato&imdbid=%s&year=%s)' % (sys.argv[0], imdbID, year))]
+      if __settings__('tormovies') == 'true':
+        contextmenu += [(__language__(30106), 'XBMC.RunPlugin(%s?action=tormovies&imdbid=%s)' % (sys.argv[0], imdbID))]      
+      listitem.addContextMenuItems(contextmenu, replaceItems=False)
       parameters = '%s?action=play&videoid=%s' % (sys.argv[0], videoId)
       xbmcplugin.addDirectoryItem(int(sys.argv[1]), parameters, listitem, False, totalItems)
-
     # Sort methods and content type...
     listitem = xbmcgui.ListItem(__language__(30204), iconImage='DefaultVideo.png', thumbnailImage=__icon__)
     parameters = '%s?action=list&key=%s&token=%s' % (sys.argv[0], self.Arguments('key'), content['next_token'])
     xbmcplugin.addDirectoryItem(int(sys.argv[1]), parameters, listitem, True)
-
     xbmcplugin.setContent(int(sys.argv[1]), 'movies')
     xbmcplugin.addSortMethod(int(sys.argv[1]), xbmcplugin.SORT_METHOD_UNSORTED)
     xbmcplugin.addSortMethod(int(sys.argv[1]), xbmcplugin.SORT_METHOD_VIDEO_TITLE)
     xbmcplugin.addSortMethod(int(sys.argv[1]), xbmcplugin.SORT_METHOD_VIDEO_RUNTIME)
     xbmcplugin.addSortMethod(int(sys.argv[1]), xbmcplugin.SORT_METHOD_VIDEO_RATING)
-
     # End of directory...
     xbmcplugin.endOfDirectory(int(sys.argv[1]), True)
 
@@ -153,18 +158,16 @@ class Main:
     xbmc.Player().play(self.getVideoURL(), listitem)
 
   def Download(self):
-    title = unicode(xbmc.getInfoLabel("ListItem.Title"), "utf-8") + ' - [Trailer]'
-    self.getVideoURL()
+    #title = unicode(xbmc.getInfoLabel("ListItem.Title"), "utf-8") + ' - [Trailer]'
+    #self.getVideoURL()
+    pass
 
   def CouchPotato(self):
-    if Debug: self.LOG('Adding to CouchPotato')
-
+    if Debug: self.LOG('CouchPotato(): Adding to CouchPotato')
     # Quality Dialog
     dialog = xbmcgui.Dialog()
     ret = dialog.select('Choose a quality', ['DVD-Rip', 'Cam', 'TeleSync', 'R5', 'DVD-R', 'BR-Rip', '720p', '1080p', 'TeleCine', 'Screener'])
 
-    xbmc_ip = xbmc.getIPAddress()
-    xbmc_port = '8080'
     ip = __settings__('cpIP')
     port = __settings__('cpPort')
     u = __settings__('cpUser')
@@ -185,20 +188,45 @@ class Main:
       encoded_post_args = urllib.urlencode(post_args)
 
       request = urllib2.Request('http://%s:%s/movie/imdbAdd/?%s' % (ip, port, encoded_query_args), encoded_post_args, header)
-
-      #add = urllib.urlopen('http://%s:%s/movie/imdbAdd/?%s' % (ip, port, encoded_query_args), encoded_post_args)
       add = urllib2.urlopen(request)
-      print add
+
       if add.read().find('added!'):
-        xbmc.executebuiltin("Notification(%s, %s)" % (__language__(30011), __language__(30102).encode('ascii', 'ignore')))
+        xbmc.executebuiltin("Notification(%s, %s)" % (__language__(30101), __language__(30102).encode('utf-8', 'ignore')))
       else:
-        xbmc.executebuiltin("Notification(%s, %s, 6000)" % (__language__(30011), __language__(30103).encode('ascii', 'ignore')))
+        xbmc.executebuiltin("Notification(%s, %s, 6000)" % (__language__(30101), __language__(30103).encode('utf-8', 'ignore')))
     except urllib2.URLError, e:
       if e.code == 401:
-        xbmc.executebuiltin("Notification(%s, %s, 6000)" % (__language__(30011), __language__(30104).encode('utf-8', 'ignore')))
+        xbmc.executebuiltin("Notification(%s, %s, 6000)" % (__language__(30101), __language__(30104).encode('utf-8', 'ignore')))
       else:
-        xbmc.executebuiltin("Notification(%s, %s, 6000)" % (__language__(30011), __language__(30105).encode('ascii', 'ignore')))
+        xbmc.executebuiltin("Notification(%s, %s, 6000)" % (__language__(30101), __language__(30105).encode('utf-8', 'ignore')))
 
+  def TorMovies(self):
+    if Debug: self.LOG('TorMovies(): Adding to TorMovies Mail Warn')
+    def _onoff(s):
+      if s == 'true':
+        return 'on'
+      else:
+        return 'off'
+      
+    query = { 'mail_warn[id]':'',  
+              'mail_warn[movie_id]':self.Arguments('imdbid'),
+              'mail_warn[bdrip]':_onoff(__settings__('tm_bdrip')),
+              'mail_warn[dvdrip]':_onoff(__settings__('tm_dvdrip')),
+              'mail_warn[r5]':_onoff(__settings__('tm_r5')),
+              'mail_warn[screener]':_onoff(__settings__('tm_screener')),
+              'mail_warn[verified]':_onoff(__settings__('tm_verified')),
+              'mail_warn[min_size]':__settings__('tm_min_size'),
+              'mail_warn[max_size]':__settings__('tm_max_size'),
+              'mail_warn[min_seeders]':__settings__('tm_min_seeders'),
+              'mail_warn[email]':__settings__('tm_email'),}
+    
+    encoded_args = urllib.urlencode(query)
+    send = urllib.urlopen(MAILWARN, encoded_args)
+    if send.read().find('Success !'):
+      xbmc.executebuiltin("Notification(%s, %s)" % (__language__(30106).encode('utf-8', 'ignore'), __language__(30107).encode('utf-8', 'ignore')))
+    else:
+      xbmc.executebuiltin("Notification(%s, %s, 6000)" % (__language__(30106).encode('utf-8', 'ignore'), __language__(30105).encode('utf-8', 'ignore')))
+  
   def Arguments(self, arg):
     Arguments = dict(part.split('=') for part in sys.argv[2][1:].split('&'))
     return urllib.unquote_plus(Arguments[arg])
@@ -225,7 +253,7 @@ class DiskCacheFetcher:
           raise
     self.cache_dir = cache_dir
 
-  def fetch(self, url, max_age=0):
+  def fetch(self, url, max_age=CACHE_TIME):
     # Use MD5 hash of the URL as the filename
     filename = hashlib.md5(url).hexdigest()
     filepath = os.path.join(self.cache_dir, filename)

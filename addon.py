@@ -166,7 +166,7 @@ class Main:
     if Debug: self.LOG('CouchPotato(): Adding to CouchPotato')
     # Quality Dialog
     dialog = xbmcgui.Dialog()
-    ret = dialog.select('Choose a quality', ['DVD-Rip', 'Cam', 'TeleSync', 'R5', 'DVD-R', 'BR-Rip', '720p', '1080p', 'TeleCine', 'Screener'])
+    ret = dialog.select('Choose a quality', ['1080p', '720p', 'BR-Rip', 'DVD-Rip', 'R5', 'Screener', 'DVD-R', 'Cam', 'TeleSync', 'TeleCine'])
 
     ip = __settings__('cpIP')
     port = __settings__('cpPort')
@@ -191,14 +191,14 @@ class Main:
       add = urllib2.urlopen(request)
 
       if add.read().find('added!'):
-        xbmc.executebuiltin("Notification(%s, %s)" % (__language__(30101), __language__(30102).encode('utf-8', 'ignore')))
+        xbmc.executebuiltin("Notification(%s, %s)" % (__language__(30101).encode('utf-8', 'ignore'), __language__(30102).encode('utf-8', 'ignore')))
       else:
-        xbmc.executebuiltin("Notification(%s, %s, 6000)" % (__language__(30101), __language__(30103).encode('utf-8', 'ignore')))
+        xbmc.executebuiltin("Notification(%s, %s, 6000)" % (__language__(30101).encode('utf-8', 'ignore'), __language__(30103).encode('utf-8', 'ignore')))
     except urllib2.URLError, e:
       if e.code == 401:
-        xbmc.executebuiltin("Notification(%s, %s, 6000)" % (__language__(30101), __language__(30104).encode('utf-8', 'ignore')))
+        xbmc.executebuiltin("Notification(%s, %s, 6000)" % (__language__(30101).encode('utf-8', 'ignore'), __language__(30104).encode('utf-8', 'ignore')))
       else:
-        xbmc.executebuiltin("Notification(%s, %s, 6000)" % (__language__(30101), __language__(30105).encode('utf-8', 'ignore')))
+        xbmc.executebuiltin("Notification(%s, %s, 6000)" % (__language__(30101).encode('utf-8', 'ignore'), __language__(30105).encode('utf-8', 'ignore')))
 
   def TorMovies(self):
     if Debug: self.LOG('TorMovies(): Adding to TorMovies Mail Warn')

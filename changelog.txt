@@ -1,5 +1,8 @@
 plugin.video.imdb.trailers:
 ---------------------------
+v1.0.5 (14.03.2012)
+-fixed: error on infoLabels writer and cast
+
 v1.0.4 (14.03.2012)
 -added: new infoLabels: tagline, genre, mpaa, writer, cast
 -other: port setting type changed text to number.

@@ -53,8 +53,8 @@ class Main:
 
   def MainMenu(self):
     if Debug: self.LOG('MainMenu()')
-    category = [{'title':__language__(30201), 'key':'top_hd'},
-                {'title':__language__(30202), 'key':'recent'},
+    category = [{'title':__language__(30202), 'key':'recent'},
+                {'title':__language__(30201), 'key':'top_hd'},
                 {'title':__language__(30203), 'key':'popular'}]
     for i in category:
       listitem = xbmcgui.ListItem(i['title'], iconImage='DefaultFolder.png', thumbnailImage=__icon__)

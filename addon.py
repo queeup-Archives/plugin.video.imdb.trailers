@@ -156,11 +156,11 @@ class Main:
 
   def getVideoURL(self):
     if Debug: self.LOG('getVideoURL()')
-    getformat = __settings__("video_quality")
-    if getformat == '0': format = '240p'
-    if getformat == '1': format = '480p'
-    if getformat == '2': format = '720p'
-    detailsUrl = DETAILS_PAGE % (self.Arguments('videoid'), format)
+    getquality = __settings__("video_quality")
+    if getquality == '0': quality = '240p'
+    if getquality == '1': quality = '480p'
+    if getquality == '2': quality = '720p'
+    detailsUrl = DETAILS_PAGE % (self.Arguments('videoid'), quality)
     if Debug: self.LOG("DetailsURL:" + detailsUrl)
     details = urllib2.urlopen(detailsUrl).read()
     index = details.find('mp4_h264')

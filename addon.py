@@ -115,10 +115,12 @@ class Main:
         pass
       cast = ''
       try:
-        cast = [c.string for c in titleData('div', {'class':'t-o-d-text-block'})[2].span.findAll('a')]
+        if titleData('div', {'class':'t-o-d-text-block'})[2].h4.string.strip() == 'Top Billed Cast:':
+          cast = [c.string for c in titleData('div', {'class':'t-o-d-text-block'})[2].span.findAll('a')]
       except:
-        cast = [c.string for c in titleData('div', {'class':'t-o-d-text-block'})[1].span.findAll('a')]
-
+        if titleData('div', {'class':'t-o-d-text-block'})[1].h4.string.strip() == 'Top Billed Cast:':
+          cast = [c.string for c in titleData('div', {'class':'t-o-d-text-block'})[1].span.findAll('a')]
+  
       listitem = xbmcgui.ListItem(title, iconImage='DefaultVideo.png', thumbnailImage=thumb)
       listitem.setInfo(type='video',
                        infoLabels={'title' : title,

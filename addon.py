@@ -53,8 +53,8 @@ class Main:
 
   def MainMenu(self):
     if Debug: self.LOG('MainMenu()')
-    category = [{'title':__language__(30201), 'key':'top_hd'},
-                {'title':__language__(30202), 'key':'recent'},
+    category = [{'title':__language__(30202), 'key':'recent'},
+                {'title':__language__(30201), 'key':'top_hd'},
                 {'title':__language__(30203), 'key':'popular'}]
     for i in category:
       listitem = xbmcgui.ListItem(i['title'], iconImage='DefaultFolder.png', thumbnailImage=__icon__)
@@ -87,24 +87,53 @@ class Main:
       summary = ''
       if len(titleData('div', 't-o-d-text-block t-o-d-plot')) > 0:
         summary = titleData('div', 't-o-d-text-block t-o-d-plot')[0].span.string
+      tagline = ''
+      if len(titleData('div', {'class':'t-o-d-text-block t-o-d-tagline'})) > 0:
+        tagline = titleData('div', {'class':'t-o-d-text-block t-o-d-tagline'})[0].span.string    
       rating = float('0.0')
       if len(titleData('span', 't-o-d-rating-value')) > 0:
         rating = float(titleData('span', 't-o-d-rating-value')[0].string)
+      mpaa = ''
+      if len(titleData('span', {'class':'t-o-d-certificate'})) > 0:
+        mpaa = titleData('span', {'class':'t-o-d-certificate'})[0].string.replace('&nbsp;','')
+      genre = ''
+      if len(titleData('span', {'class':'t-o-d-genres'})) > 0:
+        genre = titleData('span', {'class':'t-o-d-genres'})[0].a.string
       year = ''
       if len(titleData('span', 't-o-d-year')[0].string) > 0:
         year = titleData('span', 't-o-d-year')[0].string.replace('(', '').replace(')', '')
       director = ''
       if len(titleData('div', {'class':'t-o-d-text-block'})[0].a) > 0:
         director = titleData('div', {'class':'t-o-d-text-block'})[0].a.string
-
+      writer = ''
+      if titleData('div', {'class':'t-o-d-text-block'})[1].h4.string.strip() == 'Writers:':
+        writers = [c.string for c in titleData('div', {'class':'t-o-d-text-block'})[1].span.findAll('a')]
+        writer = '%s, %s' % (writers[0], writers[1])
+      elif titleData('div', {'class':'t-o-d-text-block'})[1].h4.string.strip() == 'Writer:':
+        writer = titleData('div', {'class':'t-o-d-text-block'})[1].span.a.string
+      else:
+        pass
+      cast = ''
+      try:
+        if titleData('div', {'class':'t-o-d-text-block'})[2].h4.string.strip() == 'Top Billed Cast:':
+          cast = [c.string for c in titleData('div', {'class':'t-o-d-text-block'})[2].span.findAll('a')]
+      except:
+        if titleData('div', {'class':'t-o-d-text-block'})[1].h4.string.strip() == 'Top Billed Cast:':
+          cast = [c.string for c in titleData('div', {'class':'t-o-d-text-block'})[1].span.findAll('a')]
+  
       listitem = xbmcgui.ListItem(title, iconImage='DefaultVideo.png', thumbnailImage=thumb)
       listitem.setInfo(type='video',
                        infoLabels={'title' : title,
                                    'plot' : summary,
+                                   'tagline' : tagline,
+                                   'genre' : genre, 
                                    'year' : int(year),
                                    'rating' : rating,
+                                   'mpaa' : mpaa,
                                    'duration' : str(duration),
-                                   'director' : str(director)
+                                   'director' : str(director),
+                                   'writer' : str(writer),
+                                   'cast' : cast,
                                    })
       # dummy context menu variable
       contextmenu = []
@@ -129,11 +158,11 @@ class Main:
 
   def getVideoURL(self):
     if Debug: self.LOG('getVideoURL()')
-    getformat = __settings__("video_quality")
-    if getformat == '0': format = '240p'
-    if getformat == '1': format = '480p'
-    if getformat == '2': format = '720p'
-    detailsUrl = DETAILS_PAGE % (self.Arguments('videoid'), format)
+    getquality = __settings__("video_quality")
+    if getquality == '0': quality = '240p'
+    if getquality == '1': quality = '480p'
+    if getquality == '2': quality = '720p'
+    detailsUrl = DETAILS_PAGE % (self.Arguments('videoid'), quality)
     if Debug: self.LOG("DetailsURL:" + detailsUrl)
     details = urllib2.urlopen(detailsUrl).read()
     index = details.find('mp4_h264')

@@ -106,21 +106,23 @@ class Main:
       if len(titleData('div', {'class':'t-o-d-text-block'})[0].a) > 0:
         director = titleData('div', {'class':'t-o-d-text-block'})[0].a.string
       writer = ''
-      if titleData('div', {'class':'t-o-d-text-block'})[1].h4.string.strip() == 'Writers:':
-        writers = [c.string for c in titleData('div', {'class':'t-o-d-text-block'})[1].span.findAll('a')]
-        writer = '%s, %s' % (writers[0], writers[1])
-      elif titleData('div', {'class':'t-o-d-text-block'})[1].h4.string.strip() == 'Writer:':
-        writer = titleData('div', {'class':'t-o-d-text-block'})[1].span.a.string
-      else:
+      try:
+        if titleData('div', {'class':'t-o-d-text-block'})[1].h4.string.strip() == 'Writers:':
+          writers = [c.string for c in titleData('div', {'class':'t-o-d-text-block'})[1].span.findAll('a')]
+          writer = '%s, %s' % (writers[0], writers[1])
+        elif titleData('div', {'class':'t-o-d-text-block'})[1].h4.string.strip() == 'Writer:':
+          writer = titleData('div', {'class':'t-o-d-text-block'})[1].span.a.string
+      except:
         pass
       cast = ''
       try:
         if titleData('div', {'class':'t-o-d-text-block'})[2].h4.string.strip() == 'Top Billed Cast:':
           cast = [c.string for c in titleData('div', {'class':'t-o-d-text-block'})[2].span.findAll('a')]
-      except:
-        if titleData('div', {'class':'t-o-d-text-block'})[1].h4.string.strip() == 'Top Billed Cast:':
+        elif titleData('div', {'class':'t-o-d-text-block'})[1].h4.string.strip() == 'Top Billed Cast:':
           cast = [c.string for c in titleData('div', {'class':'t-o-d-text-block'})[1].span.findAll('a')]
-  
+      except:
+        pass
+      
       listitem = xbmcgui.ListItem(title, iconImage='DefaultVideo.png', thumbnailImage=thumb)
       listitem.setInfo(type='video',
                        infoLabels={'title' : title,

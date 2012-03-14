@@ -6,7 +6,7 @@
   <category label="30302">
     <setting id="couchpotato" type="bool" label="30005" default="false" />
     <setting id="cpIP" type="text" label="30006" visible="eq(-1,true)" enable="!eq(-1,)" default="localhost" />
-    <setting id="cpPort" type="text" label="30007" visible="eq(-2,true)" enable="!eq(-2,)" default="5000" />
+    <setting id="cpPort" type="number" label="30007" visible="eq(-2,true)" enable="!eq(-2,)" default="5000" />
     <setting id="cpUser" type="text"  visible="eq(-3,true)" enable="!eq(-3,)" label="30008" default=""/>
     <setting id="cpPass" type="text" option="hidden" visible="eq(-4,true)" enable="!eq(-1,)" label="30009" default=""/>        
   </category>

@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 # Debug
-Debug = True
+Debug = False
 
 # Imports
 import sys, urllib, urllib2, base64, simplejson, BeautifulSoup

@@ -58,6 +58,7 @@ class Main:
                 {'title':__language__(30203), 'key':'popular'}]
     for i in category:
       listitem = xbmcgui.ListItem(i['title'], iconImage='DefaultFolder.png', thumbnailImage=__icon__)
+      listitem.setProperty('fanart_image', __fanart__)
       parameters = '%s?action=list&key=%s' % (sys.argv[0], i['key'])
       xbmcplugin.addDirectoryItems(int(sys.argv[1]), [(parameters, listitem, True)])
     # Sort methods and content type...
@@ -124,6 +125,7 @@ class Main:
         pass
       
       listitem = xbmcgui.ListItem(title, iconImage='DefaultVideo.png', thumbnailImage=thumb)
+      listitem.setProperty('fanart_image', __fanart__)
       listitem.setInfo(type='video',
                        infoLabels={'title' : title,
                                    'plot' : summary,

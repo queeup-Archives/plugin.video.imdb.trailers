@@ -179,28 +179,22 @@ class Main:
   def get_video_url(self):
     if DEBUG:
       self.log('get_video_url()')
-    getquality = __settings__("video_quality")
-    if getquality == '0':
-      quality = '240p'
-    if getquality == '1':
-      quality = '480p'
-    if getquality == '2':
-      quality = '720p'
+    quality = __settings__("video_quality")
     detailsUrl = DETAILS_PAGE % (self.arguments('videoid'), quality)
     if DEBUG:
-      self.log("DetailsURL:" + detailsUrl)
+      self.log('detailsURL: %s' % detailsUrl)
     details = urllib2.urlopen(detailsUrl).read()
     index = details.find('mp4_h264')
     start = details.find('http', index)
     end = details.find("'", start)
     videoUrl = details[start:end]
     if DEBUG:
-      self.log("VideoURL:" + videoUrl)
+      self.log('videoURL: %s' % videoUrl)
     return videoUrl
 
   def play(self):
     if DEBUG:
-      self.log('Play()')
+      self.log('play()')
     title = unicode(xbmc.getInfoLabel("ListItem.Title"), "utf-8")
     thumbnail = xbmc.getInfoImage("ListItem.Thumb")
     plot = unicode(xbmc.getInfoLabel("ListItem.Plot"), "utf-8")

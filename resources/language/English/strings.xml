@@ -5,9 +5,6 @@
 
   <!-- Settings -->
   <string id="30001">Video Quality</string>
-  <string id="30002">Standard</string>
-  <string id="30003">480p</string>
-  <string id="30004">720p</string>
   <string id="30005">Enable CouchPotato</string>
   <string id="30006">CouchPotato IP:</string>
   <string id="30007">CouchPotato Port:</string>

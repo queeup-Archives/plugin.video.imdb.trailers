@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <settings>
   <category label="30301">
-    <setting id="video_quality" type="enum" label="30001" default="0"   lvalues="30002|30003|30004" />
+    <setting id="video_quality" type="labelenum" label="30001" values="240p|480p|720p" default="480p" />
   </category>
   <category label="30302">
     <setting id="couchpotato" type="bool" label="30005" default="false" />

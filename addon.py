@@ -1,12 +1,25 @@
 # -*- coding: utf-8 -*-
 
-# Debug
-Debug = False
-
 # Imports
-import sys, urllib, urllib2, base64, simplejson, BeautifulSoup
-import hashlib, os, shutil, tempfile, time, errno
-import xbmc, xbmcgui, xbmcplugin, xbmcaddon
+import hashlib
+import os
+import shutil
+import tempfile
+import time
+import errno
+import sys
+import urllib
+import urllib2
+import base64
+import simplejson
+import BeautifulSoup
+import xbmc
+import xbmcgui
+import xbmcplugin
+import xbmcaddon
+
+# DEBUG
+DEBUG = False
 
 __addon__ = xbmcaddon.Addon(id='plugin.video.imdb.trailers')
 __info__ = __addon__.getAddonInfo
@@ -35,24 +48,26 @@ MAILWARN = "http://tormovies.org/frontend_dev.php/mailwarn/create"
 # Fanart
 xbmcplugin.setPluginFanart(int(sys.argv[1]), __fanart__)
 
+
 # Main
 class Main:
   def __init__(self):
     if ("action=list" in sys.argv[2]):
-      self.VideoList()
+      self.list_contents()
     elif ("action=play" in sys.argv[2]):
-      self.Play()
+      self.play()
     elif ("action=download" in sys.argv[2]):
-      self.Download()
+      self.download()
     elif ("action=couchpotato" in sys.argv[2]):
-      self.CouchPotato()
+      self.couchpotato()
     elif ("action=tormovies" in sys.argv[2]):
-      self.TorMovies()
+      self.tormovies()
     else:
-      self.MainMenu()
+      self.main_menu()
 
-  def MainMenu(self):
-    if Debug: self.LOG('MainMenu()')
+  def main_menu(self):
+    if DEBUG:
+      self.log('main_menu()')
     category = [{'title':__language__(30202), 'key':'recent'},
                 {'title':__language__(30201), 'key':'top_hd'},
                 {'title':__language__(30203), 'key':'popular'}]
@@ -66,13 +81,14 @@ class Main:
     # End of directory...
     xbmcplugin.endOfDirectory(int(sys.argv[1]), True)
 
-  def VideoList(self):
-    if Debug: self.LOG('VideoList()')
+  def list_contents(self):
+    if DEBUG:
+      self.log('content_list()')
     try:
-      token = self.Arguments('token')
+      token = self.arguments('token')
     except:
       token = ''
-    contentUrl = CONTENT_URL % self.Arguments('key') + '&token=%s' % token
+    contentUrl = CONTENT_URL % self.arguments('key') + '&token=%s' % token
     content = simplejson.loads(fetcher.fetch(contentUrl, CACHE_TIME))
     totalItems = content['video_count']
     for video in content['videos']:
@@ -89,68 +105,68 @@ class Main:
       if len(titleData('div', 't-o-d-text-block t-o-d-plot')) > 0:
         summary = titleData('div', 't-o-d-text-block t-o-d-plot')[0].span.string
       tagline = ''
-      if len(titleData('div', {'class':'t-o-d-text-block t-o-d-tagline'})) > 0:
-        tagline = titleData('div', {'class':'t-o-d-text-block t-o-d-tagline'})[0].span.string    
+      if len(titleData('div', {'class': 't-o-d-text-block t-o-d-tagline'})) > 0:
+        tagline = titleData('div', {'class': 't-o-d-text-block t-o-d-tagline'})[0].span.string
       rating = float('0.0')
       if len(titleData('span', 't-o-d-rating-value')) > 0:
         rating = float(titleData('span', 't-o-d-rating-value')[0].string)
       mpaa = ''
-      if len(titleData('span', {'class':'t-o-d-certificate'})) > 0:
-        mpaa = titleData('span', {'class':'t-o-d-certificate'})[0].string.replace('&nbsp;','')
+      if len(titleData('span', {'class': 't-o-d-certificate'})) > 0:
+        mpaa = titleData('span', {'class': 't-o-d-certificate'})[0].string.replace('&nbsp;', '')
       genre = ''
-      if len(titleData('span', {'class':'t-o-d-genres'})) > 0:
-        genre = titleData('span', {'class':'t-o-d-genres'})[0].a.string
+      if len(titleData('span', {'class': 't-o-d-genres'})) > 0:
+        genre = titleData('span', {'class': 't-o-d-genres'})[0].a.string
       year = ''
       if len(titleData('span', 't-o-d-year')[0].string) > 0:
         year = titleData('span', 't-o-d-year')[0].string.replace('(', '').replace(')', '')
       director = ''
-      if len(titleData('div', {'class':'t-o-d-text-block'})[0].a) > 0:
-        director = titleData('div', {'class':'t-o-d-text-block'})[0].a.string
+      if len(titleData('div', {'class': 't-o-d-text-block'})[0].a) > 0:
+        director = titleData('div', {'class': 't-o-d-text-block'})[0].a.string
       writer = ''
       try:
-        if titleData('div', {'class':'t-o-d-text-block'})[1].h4.string.strip() == 'Writers:':
+        if titleData('div', {'class': 't-o-d-text-block'})[1].h4.string.strip() == 'Writers:':
           writers = [c.string for c in titleData('div', {'class':'t-o-d-text-block'})[1].span.findAll('a')]
           writer = '%s, %s' % (writers[0], writers[1])
-        elif titleData('div', {'class':'t-o-d-text-block'})[1].h4.string.strip() == 'Writer:':
-          writer = titleData('div', {'class':'t-o-d-text-block'})[1].span.a.string
+        elif titleData('div', {'class': 't-o-d-text-block'})[1].h4.string.strip() == 'Writer:':
+          writer = titleData('div', {'class': 't-o-d-text-block'})[1].span.a.string
       except:
         pass
       cast = ''
       try:
-        if titleData('div', {'class':'t-o-d-text-block'})[2].h4.string.strip() == 'Top Billed Cast:':
-          cast = [c.string for c in titleData('div', {'class':'t-o-d-text-block'})[2].span.findAll('a')]
-        elif titleData('div', {'class':'t-o-d-text-block'})[1].h4.string.strip() == 'Top Billed Cast:':
-          cast = [c.string for c in titleData('div', {'class':'t-o-d-text-block'})[1].span.findAll('a')]
+        if titleData('div', {'class': 't-o-d-text-block'})[2].h4.string.strip() == 'Top Billed Cast:':
+          cast = [c.string for c in titleData('div', {'class': 't-o-d-text-block'})[2].span.findAll('a')]
+        elif titleData('div', {'class': 't-o-d-text-block'})[1].h4.string.strip() == 'Top Billed Cast:':
+          cast = [c.string for c in titleData('div', {'class': 't-o-d-text-block'})[1].span.findAll('a')]
       except:
         pass
-      
+
       listitem = xbmcgui.ListItem(title, iconImage='DefaultVideo.png', thumbnailImage=thumb)
       listitem.setProperty('fanart_image', __fanart__)
       listitem.setInfo(type='video',
-                       infoLabels={'title' : title,
-                                   'plot' : summary,
-                                   'tagline' : tagline,
-                                   'genre' : genre, 
-                                   'year' : int(year),
-                                   'rating' : rating,
-                                   'mpaa' : mpaa,
-                                   'duration' : str(duration),
-                                   'director' : str(director),
-                                   'writer' : str(writer),
-                                   'cast' : cast,
+                       infoLabels={'title': title,
+                                   'plot': summary,
+                                   'tagline': tagline,
+                                   'genre': genre,
+                                   'year': int(year),
+                                   'rating': rating,
+                                   'mpaa': mpaa,
+                                   'duration': str(duration),
+                                   'director': str(director),
+                                   'writer': str(writer),
+                                   'cast': cast,
                                    })
       # dummy context menu variable
       contextmenu = []
       if __settings__('couchpotato') == 'true':
         contextmenu += [(__language__(30101), 'XBMC.RunPlugin(%s?action=couchpotato&imdbid=%s&year=%s)' % (sys.argv[0], imdbID, year))]
       if __settings__('tormovies') == 'true':
-        contextmenu += [(__language__(30106), 'XBMC.RunPlugin(%s?action=tormovies&imdbid=%s)' % (sys.argv[0], imdbID))]      
+        contextmenu += [(__language__(30106), 'XBMC.RunPlugin(%s?action=tormovies&imdbid=%s)' % (sys.argv[0], imdbID))]
       listitem.addContextMenuItems(contextmenu, replaceItems=False)
       parameters = '%s?action=play&videoid=%s' % (sys.argv[0], videoId)
       xbmcplugin.addDirectoryItem(int(sys.argv[1]), parameters, listitem, False, totalItems)
     # Sort methods and content type...
     listitem = xbmcgui.ListItem(__language__(30204), iconImage='DefaultVideo.png', thumbnailImage=__icon__)
-    parameters = '%s?action=list&key=%s&token=%s' % (sys.argv[0], self.Arguments('key'), content['next_token'])
+    parameters = '%s?action=list&key=%s&token=%s' % (sys.argv[0], self.arguments('key'), content['next_token'])
     xbmcplugin.addDirectoryItem(int(sys.argv[1]), parameters, listitem, True)
     xbmcplugin.setContent(int(sys.argv[1]), 'movies')
     xbmcplugin.addSortMethod(int(sys.argv[1]), xbmcplugin.SORT_METHOD_UNSORTED)
@@ -160,43 +176,51 @@ class Main:
     # End of directory...
     xbmcplugin.endOfDirectory(int(sys.argv[1]), True)
 
-  def getVideoURL(self):
-    if Debug: self.LOG('getVideoURL()')
+  def get_video_url(self):
+    if DEBUG:
+      self.log('get_video_url()')
     getquality = __settings__("video_quality")
-    if getquality == '0': quality = '240p'
-    if getquality == '1': quality = '480p'
-    if getquality == '2': quality = '720p'
-    detailsUrl = DETAILS_PAGE % (self.Arguments('videoid'), quality)
-    if Debug: self.LOG("DetailsURL:" + detailsUrl)
+    if getquality == '0':
+      quality = '240p'
+    if getquality == '1':
+      quality = '480p'
+    if getquality == '2':
+      quality = '720p'
+    detailsUrl = DETAILS_PAGE % (self.arguments('videoid'), quality)
+    if DEBUG:
+      self.log("DetailsURL:" + detailsUrl)
     details = urllib2.urlopen(detailsUrl).read()
     index = details.find('mp4_h264')
     start = details.find('http', index)
     end = details.find("'", start)
     videoUrl = details[start:end]
-    if Debug: self.LOG("VideoURL:" + videoUrl)
+    if DEBUG:
+      self.log("VideoURL:" + videoUrl)
     return videoUrl
 
-  def Play(self):
-    if Debug: self.LOG('Play()')
+  def play(self):
+    if DEBUG:
+      self.log('Play()')
     title = unicode(xbmc.getInfoLabel("ListItem.Title"), "utf-8")
     thumbnail = xbmc.getInfoImage("ListItem.Thumb")
     plot = unicode(xbmc.getInfoLabel("ListItem.Plot"), "utf-8")
     # only need to add label, icon and thumbnail, setInfo() and addSortMethod() takes care of label2
     listitem = xbmcgui.ListItem(title, iconImage="DefaultVideo.png", thumbnailImage=thumbnail)
     # set the key information
-    listitem.setInfo('video', {'title' : title,
-                               'label' : title,
-                               'plot' : plot,
-                               'plotOutline' : plot })
-    xbmc.Player().play(self.getVideoURL(), listitem)
+    listitem.setInfo('video', {'title': title,
+                               'label': title,
+                               'plot': plot,
+                               'plotOutline': plot})
+    xbmc.Player().play(self.get_video_url(), listitem)
 
-  def Download(self):
+  def download(self):
     #title = unicode(xbmc.getInfoLabel("ListItem.Title"), "utf-8") + ' - [Trailer]'
     #self.getVideoURL()
     pass
 
-  def CouchPotato(self):
-    if Debug: self.LOG('CouchPotato(): Adding to CouchPotato')
+  def couchpotato(self):
+    if DEBUG:
+      self.log('couchpotato(): Adding to CouchPotato')
     # Quality Dialog
     dialog = xbmcgui.Dialog()
     ret = dialog.select('Choose a quality', ['1080p', '720p', 'BR-Rip', 'DVD-Rip', 'R5', 'Screener', 'DVD-R', 'Cam', 'TeleSync', 'TeleCine'])
@@ -210,12 +234,12 @@ class Main:
     if u and p:
       header = {'Authorization': 'Basic ' + base64.b64encode(u + ':' + p)}
 
-    imdbID = self.Arguments('imdbid')
-    year = self.Arguments('year')
+    imdbID = self.arguments('imdbid')
+    year = self.arguments('year')
 
     try:
-      query_args = { 'id':imdbID, 'year':year }
-      post_args = { 'quality':ret + 1, 'add':'Add' }
+      query_args = {'id': imdbID, 'year': year}
+      post_args = {'quality': ret + 1, 'add': 'Add'}
 
       encoded_query_args = urllib.urlencode(query_args)
       encoded_post_args = urllib.urlencode(post_args)
@@ -233,39 +257,42 @@ class Main:
       else:
         xbmc.executebuiltin("Notification(%s, %s, 6000)" % (__language__(30101).encode('utf-8', 'ignore'), __language__(30105).encode('utf-8', 'ignore')))
 
-  def TorMovies(self):
-    if Debug: self.LOG('TorMovies(): Adding to TorMovies Mail Warn')
+  def tormovies(self):
+    if DEBUG:
+      self.log('tormovies(): Adding to TorMovies Mail Warn')
+
     def _onoff(s):
       if s == 'true':
         return 'on'
       else:
         return 'off'
-      
-    query = { 'mail_warn[id]':'',  
-              'mail_warn[movie_id]':self.Arguments('imdbid'),
-              'mail_warn[bdrip]':_onoff(__settings__('tm_bdrip')),
-              'mail_warn[dvdrip]':_onoff(__settings__('tm_dvdrip')),
-              'mail_warn[r5]':_onoff(__settings__('tm_r5')),
-              'mail_warn[screener]':_onoff(__settings__('tm_screener')),
-              'mail_warn[verified]':_onoff(__settings__('tm_verified')),
-              'mail_warn[min_size]':__settings__('tm_min_size'),
-              'mail_warn[max_size]':__settings__('tm_max_size'),
-              'mail_warn[min_seeders]':__settings__('tm_min_seeders'),
-              'mail_warn[email]':__settings__('tm_email'),}
-    
+
+    query = {'mail_warn[id]': '',
+             'mail_warn[movie_id]': self.arguments('imdbid'),
+             'mail_warn[bdrip]': _onoff(__settings__('tm_bdrip')),
+             'mail_warn[dvdrip]': _onoff(__settings__('tm_dvdrip')),
+             'mail_warn[r5]': _onoff(__settings__('tm_r5')),
+             'mail_warn[screener]': _onoff(__settings__('tm_screener')),
+             'mail_warn[verified]': _onoff(__settings__('tm_verified')),
+             'mail_warn[min_size]': __settings__('tm_min_size'),
+             'mail_warn[max_size]': __settings__('tm_max_size'),
+             'mail_warn[min_seeders]': __settings__('tm_min_seeders'),
+             'mail_warn[email]': __settings__('tm_email'), }
+
     encoded_args = urllib.urlencode(query)
     send = urllib.urlopen(MAILWARN, encoded_args)
     if send.read().find('Success !'):
       xbmc.executebuiltin("Notification(%s, %s)" % (__language__(30106).encode('utf-8', 'ignore'), __language__(30107).encode('utf-8', 'ignore')))
     else:
       xbmc.executebuiltin("Notification(%s, %s, 6000)" % (__language__(30106).encode('utf-8', 'ignore'), __language__(30105).encode('utf-8', 'ignore')))
-  
-  def Arguments(self, arg):
-    Arguments = dict(part.split('=') for part in sys.argv[2][1:].split('&'))
-    return urllib.unquote_plus(Arguments[arg])
 
-  def LOG(self, description):
+  def arguments(self, arg):
+    _arguments = dict(part.split('=') for part in sys.argv[2][1:].split('&'))
+    return urllib.unquote_plus(_arguments[arg])
+
+  def log(self, description):
     xbmc.log("[ADD-ON] '%s v%s': %s" % (__plugin__, __version__, description), xbmc.LOGNOTICE)
+
 
 class DiskCacheFetcher:
   def __init__(self, cache_dir=None):
@@ -292,10 +319,12 @@ class DiskCacheFetcher:
     filepath = os.path.join(self.cache_dir, filename)
     if os.path.exists(filepath):
       if int(time.time()) - os.path.getmtime(filepath) < max_age:
-        if Debug: print 'file exists and reading from cache.'
+        if DEBUG:
+          print 'file exists and reading from cache.'
         return open(filepath).read()
     # Retrieve over HTTP and cache, using rename to avoid collisions
-    if Debug: print 'file not yet cached or cache time expired. File reading from URL and try to cache to disk'
+    if DEBUG:
+      print 'file not yet cached or cache time expired. File reading from URL and try to cache to disk'
     data = urllib2.urlopen(url).read()
     fd, temppath = tempfile.mkstemp()
     fp = os.fdopen(fd, 'w')

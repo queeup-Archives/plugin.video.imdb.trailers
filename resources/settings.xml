@@ -10,6 +10,13 @@
     <setting id="cpUser" type="text"  visible="eq(-3,true)" enable="!eq(-3,)" label="30008" default=""/>
     <setting id="cpPass" type="text" option="hidden" visible="eq(-4,true)" enable="!eq(-1,)" label="30009" default=""/>        
   </category>
+  <category label="30304">
+    <setting id="couchpotatoserver" type="bool" label="30020" default="false" />
+    <setting id="cpsIP" type="text" label="30021" visible="eq(-1,true)" enable="!eq(-1,)" default="localhost" />
+    <setting id="cpsPort" type="number" label="30022" visible="eq(-2,true)" enable="!eq(-2,)" default="5050" />
+    <setting id="cpsUser" type="text"  visible="eq(-3,true)" enable="!eq(-3,)" label="30023" default=""/>
+    <setting id="cpsPass" type="text" option="hidden" visible="eq(-4,true)" enable="!eq(-1,)" label="30024" default=""/>        
+  </category>
   <category label="30303">
     <setting id="tormovies" type="bool" label="30010" default="false" />
     <setting id="tm_email" type="text" label="30011" visible="eq(-1,true)" enable="!eq(-1,)" default="" />

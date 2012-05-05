@@ -60,6 +60,8 @@ class Main:
       self.download()
     elif ("action=couchpotato" in sys.argv[2]):
       self.couchpotato()
+    elif ("action=couchpotatoserver" in sys.argv[2]):
+      self.couchpotatoserver()
     elif ("action=tormovies" in sys.argv[2]):
       self.tormovies()
     else:
@@ -159,6 +161,8 @@ class Main:
       contextmenu = []
       if __settings__('couchpotato') == 'true':
         contextmenu += [(__language__(30101), 'XBMC.RunPlugin(%s?action=couchpotato&imdbid=%s&year=%s)' % (sys.argv[0], imdbID, year))]
+      if __settings__('couchpotatoserver') == 'true':
+        contextmenu += [(__language__(30108), 'XBMC.RunPlugin(%s?action=couchpotatoserver&imdbid=%s)' % (sys.argv[0], imdbID))]
       if __settings__('tormovies') == 'true':
         contextmenu += [(__language__(30106), 'XBMC.RunPlugin(%s?action=tormovies&imdbid=%s)' % (sys.argv[0], imdbID))]
       listitem.addContextMenuItems(contextmenu, replaceItems=False)
@@ -251,6 +255,36 @@ class Main:
       else:
         xbmc.executebuiltin("Notification(%s, %s, 6000)" % (__language__(30101).encode('utf-8', 'ignore'), __language__(30105).encode('utf-8', 'ignore')))
 
+  def couchpotatoserver(self):
+    if DEBUG:
+      self.log('couchpotatoserver(): Adding to CouchPotatoServer')
+
+    ip = __settings__('cpsIP')
+    port = __settings__('cpsPort')
+    u = __settings__('cpsUser')
+    p = __settings__('cpsPass')
+    imdbID = self.arguments('imdbid')
+
+    def get_api_key():
+      if u and p:
+        apikey_url = 'http://%s:%s/getkey/?p=%s&u=%s' % (ip, port, self.md5(p), self.md5(u))
+      else:
+        apikey_url = 'http://%s:%s/getkey/' % (ip, port)
+      get_apikey = simplejson.load(urllib.urlopen(apikey_url))
+      if get_apikey['success']:
+        return get_apikey['api_key']
+      else:
+        self.log('Error on geting apikey!')
+
+    query_args = {'identifier': imdbID}
+    encoded_query_args = urllib.urlencode(query_args)
+    request = urllib2.Request('http://%s:%s/api/%s/movie.add/?%s' % (ip, port, get_api_key(), encoded_query_args))
+    add = urllib2.urlopen(request)
+    if simplejson.load(add)['success']:
+      xbmc.executebuiltin("Notification(%s, %s)" % (__language__(30108).encode('utf-8', 'ignore'), __language__(30109).encode('utf-8', 'ignore')))
+    else:
+      xbmc.executebuiltin("Notification(%s, %s, 6000)" % (__language__(30108).encode('utf-8', 'ignore'), __language__(30110).encode('utf-8', 'ignore')))
+
   def tormovies(self):
     if DEBUG:
       self.log('tormovies(): Adding to TorMovies Mail Warn')
@@ -279,6 +313,9 @@ class Main:
       xbmc.executebuiltin("Notification(%s, %s)" % (__language__(30106).encode('utf-8', 'ignore'), __language__(30107).encode('utf-8', 'ignore')))
     else:
       xbmc.executebuiltin("Notification(%s, %s, 6000)" % (__language__(30106).encode('utf-8', 'ignore'), __language__(30105).encode('utf-8', 'ignore')))
+
+  def md5(self, _string):
+    return hashlib.md5(str(_string)).hexdigest()
 
   def arguments(self, arg):
     _arguments = dict(part.split('=') for part in sys.argv[2][1:].split('&'))

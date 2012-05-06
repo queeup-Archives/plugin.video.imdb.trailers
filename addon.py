@@ -60,7 +60,7 @@ class Main:
       self.download()
     elif ("action=couchpotato" in sys.argv[2]):
       self.couchpotato()
-    elif ("action=couchpotatoserver" in sys.argv[2]):
+    elif ("action=_couchpotatoserver" in sys.argv[2]):
       self.couchpotatoserver()
     elif ("action=tormovies" in sys.argv[2]):
       self.tormovies()
@@ -162,7 +162,7 @@ class Main:
       if __settings__('couchpotato') == 'true':
         contextmenu += [(__language__(30101), 'XBMC.RunPlugin(%s?action=couchpotato&imdbid=%s&year=%s)' % (sys.argv[0], imdbID, year))]
       if __settings__('couchpotatoserver') == 'true':
-        contextmenu += [(__language__(30108), 'XBMC.RunPlugin(%s?action=couchpotatoserver&imdbid=%s)' % (sys.argv[0], imdbID))]
+        contextmenu += [(__language__(30108), 'XBMC.RunPlugin(%s?action=_couchpotatoserver&imdbid=%s)' % (sys.argv[0], imdbID))]
       if __settings__('tormovies') == 'true':
         contextmenu += [(__language__(30106), 'XBMC.RunPlugin(%s?action=tormovies&imdbid=%s)' % (sys.argv[0], imdbID))]
       listitem.addContextMenuItems(contextmenu, replaceItems=False)

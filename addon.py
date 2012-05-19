@@ -170,6 +170,7 @@ class Main:
       xbmcplugin.addDirectoryItem(int(sys.argv[1]), parameters, listitem, False, totalItems)
     # Sort methods and content type...
     listitem = xbmcgui.ListItem(__language__(30204), iconImage='DefaultVideo.png', thumbnailImage=__icon__)
+    listitem.setProperty('fanart_image', __fanart__)
     parameters = '%s?action=list&key=%s&token=%s' % (sys.argv[0], self.arguments('key'), content['next_token'])
     xbmcplugin.addDirectoryItem(int(sys.argv[1]), parameters, listitem, True)
     xbmcplugin.setContent(int(sys.argv[1]), 'movies')

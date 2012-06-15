@@ -21,13 +21,12 @@ import xbmcaddon
 # DEBUG
 DEBUG = False
 
-__addon__ = xbmcaddon.Addon(id='plugin.video.imdb.trailers')
-__info__ = __addon__.getAddonInfo
-__plugin__ = __info__('name')
-__version__ = __info__('version')
-__icon__ = __info__('icon')
-__fanart__ = __info__('fanart')
-__cachedir__ = __info__('profile')
+__addon__ = xbmcaddon.Addon()
+__plugin__ = __addon__.getAddonInfo('name')
+__version__ = __addon__.getAddonInfo('version')
+__icon__ = __addon__.getAddonInfo('icon')
+__fanart__ = __addon__.getAddonInfo('fanart')
+__cachedir__ = __addon__.getAddonInfo('profile')
 __language__ = __addon__.getLocalizedString
 __settings__ = __addon__.getSetting
 

@@ -12,7 +12,6 @@ import urllib
 import urllib2
 import base64
 import simplejson
-import BeautifulSoup
 import xbmc
 import xbmcgui
 import xbmcplugin

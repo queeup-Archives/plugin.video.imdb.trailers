@@ -1,5 +1,10 @@
 plugin.video.imdb.trailers:
 ---------------------------
+v2.0.1 (16.06.2012)
+-fixed new website structure
+-remove unused Beautifulsoup import
+-cosmetic
+
 v2.0.0 (27.04.2012)
 -video quality setting change to enum to labelenum
 -code cleanup and reorder with pep8 rules

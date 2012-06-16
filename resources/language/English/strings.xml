@@ -45,8 +45,8 @@
   <string id="30110">Error! while Adding to CouchPotatoServer!</string>
   
   <!-- Directory -->
-  <string id="30201">Most Viewed Trailers</string>
-  <string id="30202">Recent Trailers</string>
-  <string id="30203">Popular Trailers</string>
+  <string id="30201">New Trailers</string>
+  <string id="30202">Popular Trailers</string>
+  <string id="30203">Popular Movies</string>
   <string id="30204">More...</string>
 </strings>

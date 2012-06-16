@@ -38,8 +38,8 @@ CACHE_1MONTH = 2592000
 
 CACHE_TIME = CACHE_1HOUR
 
-TRAILERS = "http://www.imdb.com/features/video/trailers"
-CONTENT_URL = "http://www.imdb.com/video/trailers/data/_json?list=%s"
+MAIN_URL = 'http://www.imdb.com'
+CONTENT_URL = 'http://www.imdb.com/video/trailers/data/_ajax/adapter/shoveler?list=%s&debug=0'
 DETAILS_PAGE = "http://www.imdb.com/video/imdb/%s/html5?format=%s"
 # tormovies.org mailwarn
 MAILWARN = "http://tormovies.org/frontend_dev.php/mailwarn/create"
@@ -55,8 +55,6 @@ class Main:
       self.list_contents()
     elif ("action=play" in sys.argv[2]):
       self.play()
-    elif ("action=download" in sys.argv[2]):
-      self.download()
     elif ("action=couchpotato" in sys.argv[2]):
       self.couchpotato()
     elif ("action=_couchpotatoserver" in sys.argv[2]):
@@ -69,8 +67,8 @@ class Main:
   def main_menu(self):
     if DEBUG:
       self.log('main_menu()')
-    category = [{'title':__language__(30202), 'key':'recent'},
-                {'title':__language__(30201), 'key':'top_hd'},
+    category = [{'title':__language__(30201), 'key':'recent'},
+                {'title':__language__(30202), 'key':'top_hd'},
                 {'title':__language__(30203), 'key':'popular'}]
     for i in category:
       listitem = xbmcgui.ListItem(i['title'], iconImage='DefaultFolder.png', thumbnailImage=__icon__)
@@ -86,76 +84,56 @@ class Main:
     if DEBUG:
       self.log('content_list()')
     try:
-      token = self.arguments('token')
+      contentUrl = self.arguments('next_page')
     except:
-      token = ''
-    contentUrl = CONTENT_URL % self.arguments('key') + '&token=%s' % token
+      contentUrl = CONTENT_URL % self.arguments('key')
     content = simplejson.loads(fetcher.fetch(contentUrl, CACHE_TIME))
-    totalItems = content['video_count']
-    for video in content['videos']:
-      videoId = video['video']
-      try:
-        thumb = video['poster'].replace('_V1_', '_V1_SY380_')
-      except:
-        thumb = 'http://i.media-imdb.com/images/nopicture/large/film_hd-gallery.png'
-      title = unicode(video['title_title'])
-      imdbID = video['title']
-      duration = video['duration']
-      titleData = BeautifulSoup.BeautifulSoup(video['title_data'])
-      summary = ''
-      if len(titleData('div', 't-o-d-text-block t-o-d-plot')) > 0:
-        summary = titleData('div', 't-o-d-text-block t-o-d-plot')[0].span.string
-      tagline = ''
-      if len(titleData('div', {'class': 't-o-d-text-block t-o-d-tagline'})) > 0:
-        tagline = titleData('div', {'class': 't-o-d-text-block t-o-d-tagline'})[0].span.string
-      rating = float('0.0')
-      if len(titleData('span', 't-o-d-rating-value')) > 0:
-        rating = float(titleData('span', 't-o-d-rating-value')[0].string)
-      mpaa = ''
-      if len(titleData('span', {'class': 't-o-d-certificate'})) > 0:
-        mpaa = titleData('span', {'class': 't-o-d-certificate'})[0].string.replace('&nbsp;', '')
-      genre = ''
-      if len(titleData('span', {'class': 't-o-d-genres'})) > 0:
-        genre = titleData('span', {'class': 't-o-d-genres'})[0].a.string
-      year = ''
-      if len(titleData('span', 't-o-d-year')[0].string) > 0:
-        year = titleData('span', 't-o-d-year')[0].string.replace('(', '').replace(')', '')
-      director = ''
-      if len(titleData('div', {'class': 't-o-d-text-block'})[0].a) > 0:
-        director = titleData('div', {'class': 't-o-d-text-block'})[0].a.string
-      writer = ''
-      try:
-        if titleData('div', {'class': 't-o-d-text-block'})[1].h4.string.strip() == 'Writers:':
-          writers = [c.string for c in titleData('div', {'class':'t-o-d-text-block'})[1].span.findAll('a')]
-          writer = '%s, %s' % (writers[0], writers[1])
-        elif titleData('div', {'class': 't-o-d-text-block'})[1].h4.string.strip() == 'Writer:':
-          writer = titleData('div', {'class': 't-o-d-text-block'})[1].span.a.string
-      except:
-        pass
-      cast = ''
-      try:
-        if titleData('div', {'class': 't-o-d-text-block'})[2].h4.string.strip() == 'Top Billed Cast:':
-          cast = [c.string for c in titleData('div', {'class': 't-o-d-text-block'})[2].span.findAll('a')]
-        elif titleData('div', {'class': 't-o-d-text-block'})[1].h4.string.strip() == 'Top Billed Cast:':
-          cast = [c.string for c in titleData('div', {'class': 't-o-d-text-block'})[1].span.findAll('a')]
-      except:
-        pass
+    try:
+      next_page_url = MAIN_URL + content['model']['next']
+      next_page = True
+    except:
+      next_page = False
+    for video in content['model']['items']:
+      plot = video['overview']['plot']
+      if not plot:
+        plot = ''
+      # Check how to genre list
+      genres = video['overview']['genres'][0]
+      mpaa = video['overview']['certificate']
+      if not mpaa:
+        mpaa = ''
+      rating = video['overview']['user_rating']
+      if not rating:
+        rating = 0
+      # Check empty and list director list
+      directors = video['overview']['directors']
+      if len(directors) > 1:
+        directors = '%s, %s' % (directors[0], directors[1])
+      elif len(directors) < 1:
+        directors = ''
+      else:
+        directors = directors[0]
+      stars = video['overview']['stars']
+      duration = video['video']['duration']['string']
+      fanart = video['video']['slateUrl']
+      videoId = video['video']['videoId']
+      title = video['display']['text']
+      year = video['display']['year']
+      imdbID = video['display']['titleId']
+      poster = video['display']['poster']['url'].split('_V1._')[0] + '_V1._SY512_.jpg'
 
-      listitem = xbmcgui.ListItem(title, iconImage='DefaultVideo.png', thumbnailImage=thumb)
-      listitem.setProperty('fanart_image', __fanart__)
+      listitem = xbmcgui.ListItem(title, iconImage='DefaultVideo.png', thumbnailImage=poster)
+      listitem.setProperty('fanart_image', fanart)
       listitem.setInfo(type='video',
                        infoLabels={'title': title,
-                                   'plot': summary,
-                                   'tagline': tagline,
-                                   'genre': genre,
+                                   'plot': plot,
+                                   'genre': genres,
                                    'year': int(year),
-                                   'rating': rating,
+                                   'rating': float(rating),
                                    'mpaa': mpaa,
                                    'duration': str(duration),
-                                   'director': str(director),
-                                   'writer': str(writer),
-                                   'cast': cast,
-                                   })
+                                   'director': directors.encode('utf-8', 'ignore'),
+                                   'cast': stars})
       # dummy context menu variable
       contextmenu = []
       if __settings__('couchpotato') == 'true':
@@ -166,12 +144,13 @@ class Main:
         contextmenu += [(__language__(30106), 'XBMC.RunPlugin(%s?action=tormovies&imdbid=%s)' % (sys.argv[0], imdbID))]
       listitem.addContextMenuItems(contextmenu, replaceItems=False)
       parameters = '%s?action=play&videoid=%s' % (sys.argv[0], videoId)
-      xbmcplugin.addDirectoryItem(int(sys.argv[1]), parameters, listitem, False, totalItems)
+      xbmcplugin.addDirectoryItem(int(sys.argv[1]), parameters, listitem, False)
     # Sort methods and content type...
-    listitem = xbmcgui.ListItem(__language__(30204), iconImage='DefaultVideo.png', thumbnailImage=__icon__)
-    listitem.setProperty('fanart_image', __fanart__)
-    parameters = '%s?action=list&key=%s&token=%s' % (sys.argv[0], self.arguments('key'), content['next_token'])
-    xbmcplugin.addDirectoryItem(int(sys.argv[1]), parameters, listitem, True)
+    if next_page:
+      listitem = xbmcgui.ListItem(__language__(30204), iconImage='DefaultVideo.png', thumbnailImage=__icon__)
+      listitem.setProperty('fanart_image', __fanart__)
+      parameters = '%s?action=list&next_page=%s' % (sys.argv[0], urllib.quote_plus(next_page_url))
+      xbmcplugin.addDirectoryItem(int(sys.argv[1]), parameters, listitem, True)
     xbmcplugin.setContent(int(sys.argv[1]), 'movies')
     xbmcplugin.addSortMethod(int(sys.argv[1]), xbmcplugin.SORT_METHOD_UNSORTED)
     xbmcplugin.addSortMethod(int(sys.argv[1]), xbmcplugin.SORT_METHOD_VIDEO_TITLE)
@@ -210,11 +189,6 @@ class Main:
                                'plot': plot,
                                'plotOutline': plot})
     xbmc.Player().play(self.get_video_url(), listitem)
-
-  def download(self):
-    #title = unicode(xbmc.getInfoLabel("ListItem.Title"), "utf-8") + ' - [Trailer]'
-    #self.getVideoURL()
-    pass
 
   def couchpotato(self):
     if DEBUG:

@@ -45,8 +45,8 @@
   <string id="30110">CouchPotatoServer'a eklenirken bir hata oluştu!</string>
 
   <!-- Directory -->
-  <string id="30201">Ençok İzlenen Fragmanlar</string>
-  <string id="30202">Yeni Fragmanlar</string>
-  <string id="30203">Popüler Fragmanlar</string>
+  <string id="30201">Yeni Fragmanlar</string>
+  <string id="30202">Popüler Fragmanlar</string>
+  <string id="30203">Popüler Filmler</string>
   <string id="30204">Daha Fazla...</string>
 </strings>

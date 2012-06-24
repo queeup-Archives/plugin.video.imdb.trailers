@@ -119,7 +119,10 @@ class Main:
       title = video['display']['text']
       year = video['display']['year']
       imdbID = video['display']['titleId']
-      poster = video['display']['poster']['url'].split('_V1._')[0] + '_V1._SY512_.jpg'
+      try:
+        poster = video['display']['poster']['url'].split('_V1._')[0] + '_V1._SY512_.jpg'
+      except:
+        poster = 'http://i.media-imdb.com/images/nopicture/large/film_hd-gallery.png'
 
       listitem = xbmcgui.ListItem(title, iconImage='DefaultVideo.png', thumbnailImage=poster)
       listitem.setProperty('fanart_image', fanart)

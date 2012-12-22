@@ -1,5 +1,9 @@
 plugin.video.imdb.trailers:
 ---------------------------
+v2.0.3 (23.12.2012)
+-fixed video link
+-fixed title
+
 v2.0.2 (24.06.2012)
 -fixed listing without poster movies
 

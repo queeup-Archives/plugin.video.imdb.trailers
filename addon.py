@@ -118,7 +118,7 @@ class Main:
       duration = video['video']['duration']['string']
       fanart = video['video']['slateUrl']
       videoId = video['video']['videoId']
-      title = video['display']['text']
+      title = video['display']['text'].replace('&#x26;', '&').replace('&#x27;', "'")
       year = video['display']['year']
       imdbID = video['display']['titleId']
       try:

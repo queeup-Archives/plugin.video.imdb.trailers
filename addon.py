@@ -3,6 +3,7 @@
 # Imports
 import hashlib
 import os
+import re
 import shutil
 import tempfile
 import time
@@ -39,7 +40,8 @@ CACHE_TIME = CACHE_1HOUR
 
 MAIN_URL = 'http://www.imdb.com'
 CONTENT_URL = 'http://www.imdb.com/video/trailers/data/_ajax/adapter/shoveler?list=%s&debug=0'
-DETAILS_PAGE = "http://www.imdb.com/video/imdb/%s/html5?format=%s"
+OLD_DETAILS_PAGE = "http://www.imdb.com/video/imdb/%s/html5?format=%s"
+DETAILS_PAGE = "http://www.imdb.com/video/imdb/%s/imdbvideo?format=%s"
 # tormovies.org mailwarn
 MAILWARN = "http://tormovies.org/frontend_dev.php/mailwarn/create"
 
@@ -169,10 +171,7 @@ class Main:
     if DEBUG:
       self.log('detailsURL: %s' % detailsUrl)
     details = urllib2.urlopen(detailsUrl).read()
-    index = details.find('mp4_h264')
-    start = details.find('http', index)
-    end = details.find("'", start)
-    videoUrl = details[start:end]
+    videoUrl = re.findall('"url":"(.+?)"', details)[0]
     if DEBUG:
       self.log('videoURL: %s' % videoUrl)
     return videoUrl

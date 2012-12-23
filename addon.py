@@ -206,8 +206,8 @@ class Main:
     if u and p:
       header = {'Authorization': 'Basic ' + base64.b64encode(u + ':' + p)}
 
-    imdbID = self.arguments('imdbid')
-    year = self.arguments('year')
+    imdbID = self.parameters('imdbid')
+    year = self.parameters('year')
 
     try:
       query_args = {'id': imdbID, 'year': year}
@@ -237,7 +237,7 @@ class Main:
     port = __settings__('cpsPort')
     u = __settings__('cpsUser')
     p = __settings__('cpsPass')
-    imdbID = self.arguments('imdbid')
+    imdbID = self.parameters('imdbid')
 
     def md5(_string):
       return hashlib.md5(str(_string)).hexdigest()

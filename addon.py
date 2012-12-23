@@ -219,14 +219,14 @@ class Main:
       add = urllib2.urlopen(request)
 
       if add.read().find('added!'):
-        xbmc.executebuiltin("Notification(%s, %s)" % (__language__(30101).encode('utf-8', 'ignore'), __language__(30102).encode('utf-8', 'ignore')))
+        self.notification(__language__(30101).encode('utf-8', 'ignore'), __language__(30102).encode('utf-8', 'ignore'))
       else:
-        xbmc.executebuiltin("Notification(%s, %s, 6000)" % (__language__(30101).encode('utf-8', 'ignore'), __language__(30103).encode('utf-8', 'ignore')))
+        self.notification(__language__(30101).encode('utf-8', 'ignore'), __language__(30103).encode('utf-8', 'ignore'), displaytime=6000)
     except urllib2.URLError, e:
       if e.code == 401:
-        xbmc.executebuiltin("Notification(%s, %s, 6000)" % (__language__(30101).encode('utf-8', 'ignore'), __language__(30104).encode('utf-8', 'ignore')))
+        self.notification(__language__(30101).encode('utf-8', 'ignore'), __language__(30104).encode('utf-8', 'ignore'), displaytime=6000)
       else:
-        xbmc.executebuiltin("Notification(%s, %s, 6000)" % (__language__(30101).encode('utf-8', 'ignore'), __language__(30105).encode('utf-8', 'ignore')))
+        self.notification(__language__(30101).encode('utf-8', 'ignore'), __language__(30105).encode('utf-8', 'ignore'), displaytime=6000)
 
   def couchpotatoserver(self):
     if DEBUG:
@@ -254,12 +254,16 @@ class Main:
     request = urllib2.Request('http://%s:%s/api/%s/movie.add/?%s' % (ip, port, get_api_key(), encoded_query_args))
     add = urllib2.urlopen(request)
     if simplejson.load(add)['success']:
-      xbmc.executebuiltin("Notification(%s, %s)" % (__language__(30108).encode('utf-8', 'ignore'), __language__(30109).encode('utf-8', 'ignore')))
+      self.notification(__language__(30108).encode('utf-8', 'ignore'), __language__(30109).encode('utf-8', 'ignore'))
     else:
-      xbmc.executebuiltin("Notification(%s, %s, 6000)" % (__language__(30108).encode('utf-8', 'ignore'), __language__(30110).encode('utf-8', 'ignore')))
+      self.notification(__language__(30108).encode('utf-8', 'ignore'), __language__(30110).encode('utf-8', 'ignore'), displaytime=6000)
 
   def md5(self, _string):
     return hashlib.md5(str(_string)).hexdigest()
+
+  def notification(self, title, message, image=__icon__, displaytime=5000):
+    xbmc.executeJSONRPC('{"jsonrpc": "2.0", "method": "GUI.ShowNotification", "params": {"title": "%s", "message": "%s", "image": "%s", "displaytime": %i}, "id": "%s"}' % \
+                        (title, message, image, displaytime, __addon__.getAddonInfo('id')))
 
   def parameters(self, arg):
     _parameters = urlparse.parse_qs(urlparse.urlparse(sys.argv[2]).query)

@@ -42,8 +42,6 @@ MAIN_URL = 'http://www.imdb.com'
 CONTENT_URL = 'http://www.imdb.com/video/trailers/data/_ajax/adapter/shoveler?list=%s&debug=0'
 OLD_DETAILS_PAGE = "http://www.imdb.com/video/imdb/%s/html5?format=%s"
 DETAILS_PAGE = "http://www.imdb.com/video/imdb/%s/imdbvideo?format=%s"
-# tormovies.org mailwarn
-MAILWARN = "http://tormovies.org/frontend_dev.php/mailwarn/create"
 
 # Fanart
 xbmcplugin.setPluginFanart(int(sys.argv[1]), __fanart__)
@@ -60,8 +58,6 @@ class Main:
       self.couchpotato()
     elif ("action=_couchpotatoserver" in sys.argv[2]):
       self.couchpotatoserver()
-    elif ("action=tormovies" in sys.argv[2]):
-      self.tormovies()
     else:
       self.main_menu()
 
@@ -144,8 +140,6 @@ class Main:
         contextmenu += [(__language__(30101), 'XBMC.RunPlugin(%s?action=couchpotato&imdbid=%s&year=%s)' % (sys.argv[0], imdbID, year))]
       if __settings__('couchpotatoserver') == 'true':
         contextmenu += [(__language__(30108), 'XBMC.RunPlugin(%s?action=_couchpotatoserver&imdbid=%s)' % (sys.argv[0], imdbID))]
-      if __settings__('tormovies') == 'true':
-        contextmenu += [(__language__(30106), 'XBMC.RunPlugin(%s?action=tormovies&imdbid=%s)' % (sys.argv[0], imdbID))]
       listitem.addContextMenuItems(contextmenu, replaceItems=False)
       parameters = '%s?action=play&videoid=%s' % (sys.argv[0], videoId)
       xbmcplugin.addDirectoryItem(int(sys.argv[1]), parameters, listitem, False)
@@ -259,35 +253,6 @@ class Main:
       xbmc.executebuiltin("Notification(%s, %s)" % (__language__(30108).encode('utf-8', 'ignore'), __language__(30109).encode('utf-8', 'ignore')))
     else:
       xbmc.executebuiltin("Notification(%s, %s, 6000)" % (__language__(30108).encode('utf-8', 'ignore'), __language__(30110).encode('utf-8', 'ignore')))
-
-  def tormovies(self):
-    if DEBUG:
-      self.log('tormovies(): Adding to TorMovies Mail Warn')
-
-    def _onoff(s):
-      if s == 'true':
-        return 'on'
-      else:
-        return 'off'
-
-    query = {'mail_warn[id]': '',
-             'mail_warn[movie_id]': self.arguments('imdbid'),
-             'mail_warn[bdrip]': _onoff(__settings__('tm_bdrip')),
-             'mail_warn[dvdrip]': _onoff(__settings__('tm_dvdrip')),
-             'mail_warn[r5]': _onoff(__settings__('tm_r5')),
-             'mail_warn[screener]': _onoff(__settings__('tm_screener')),
-             'mail_warn[verified]': _onoff(__settings__('tm_verified')),
-             'mail_warn[min_size]': __settings__('tm_min_size'),
-             'mail_warn[max_size]': __settings__('tm_max_size'),
-             'mail_warn[min_seeders]': __settings__('tm_min_seeders'),
-             'mail_warn[email]': __settings__('tm_email'), }
-
-    encoded_args = urllib.urlencode(query)
-    send = urllib.urlopen(MAILWARN, encoded_args)
-    if send.read().find('Success !'):
-      xbmc.executebuiltin("Notification(%s, %s)" % (__language__(30106).encode('utf-8', 'ignore'), __language__(30107).encode('utf-8', 'ignore')))
-    else:
-      xbmc.executebuiltin("Notification(%s, %s, 6000)" % (__language__(30106).encode('utf-8', 'ignore'), __language__(30105).encode('utf-8', 'ignore')))
 
   def md5(self, _string):
     return hashlib.md5(str(_string)).hexdigest()

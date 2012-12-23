@@ -17,16 +17,4 @@
     <setting id="cpsUser" type="text"  visible="eq(-3,true)" enable="!eq(-3,)" label="30023" default=""/>
     <setting id="cpsPass" type="text" option="hidden" visible="eq(-4,true)" enable="!eq(-1,)" label="30024" default=""/>        
   </category>
-  <category label="30303">
-    <setting id="tormovies" type="bool" label="30010" default="false" />
-    <setting id="tm_email" type="text" label="30011" visible="eq(-1,true)" enable="!eq(-1,)" default="" />
-    <setting id="tm_verified" type="bool" label="30012" visible="eq(-2,true)" enable="!eq(-2,)" default="true" />
-    <setting id="tm_bdrip" type="bool"  label="30013" visible="eq(-3,true)" enable="!eq(-3,)" default="true"/>
-    <setting id="tm_dvdrip" type="bool" label="30014" visible="eq(-4,true)" enable="!eq(-4,)" default="false"/>        
-    <setting id="tm_r5" type="bool" label="30015" visible="eq(-5,true)" enable="!eq(-5,)" default="false"/>        
-    <setting id="tm_screener" type="bool" label="30016" visible="eq(-6,true)" enable="!eq(-6,)" default="false"/>
-    <setting id="tm_min_size" type="number" label="30017" visible="eq(-7,true)" enable="!eq(-7,)" default="1000"/>
-    <setting id="tm_max_size" type="number" label="30018" visible="eq(-8,true)" enable="!eq(-8,)" default="3000"/>
-    <setting id="tm_min_seeders" type="number" label="30019" visible="eq(-9,true)" enable="!eq(-9,)" default="50"/>     
-  </category>
 </settings>

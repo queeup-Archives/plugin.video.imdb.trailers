@@ -10,16 +10,6 @@
   <string id="30007">CouchPotato Port:</string>
   <string id="30008">CouchPotato Kullanıcı Adı:</string>
   <string id="30009">CouchPotato Parola:</string>
-  <string id="30010">TorMovies.org E-posta Uyarıcıyı Etkinleştir</string>
-  <string id="30011">E-posta:</string>
-  <string id="30012">Torrent doğrulanmış olmalı:</string>
-  <string id="30013">BDRip:</string>
-  <string id="30014">DVDRip:</string>
-  <string id="30015">R5:</string>
-  <string id="30016">Screener:</string>
-  <string id="30017">Minimum Boyut MB:</string>
-  <string id="30018">Maksimum Boyut MB (0 = sınırsız):</string>
-  <string id="30019">Minimum seeders sayısı:</string>
   <string id="30020">CouchPotatoServer'ı Etkinleştir</string>
   <string id="30021">CouchPotatoServer IP:</string>
   <string id="30022">CouchPotatoServer Port:</string>
@@ -29,7 +19,6 @@
   <!-- Settings Categories-->
   <string id="30301">Genel</string>
   <string id="30302">CouchPotato</string>
-  <string id="30303">Tormovies</string>
   <string id="30304">CouchPotatoServer</string>
   
   <!-- Context Menu & Messages -->
@@ -38,8 +27,6 @@
   <string id="30103">CouchPotato'ya eklenirken bir hata oluştu!</string>
   <string id="30104">Yetki Verilmemiş. Lütfen kullanıcı adını ve parolayı kontrol edin.</string>
   <string id="30105">Bilinmeyen Hata!</string>
-  <string id="30106">TorMovies.org E-posta Uyarıcı</string>
-  <string id="30107">Başarılı! E-postalarınızı sıklıkla kontrol ediniz.</string>
   <string id="30108">CouchPotatoServer'a ekle</string>
   <string id="30109">CouchPotatoServer'a başarıyla eklendi!</string>
   <string id="30110">CouchPotatoServer'a eklenirken bir hata oluştu!</string>

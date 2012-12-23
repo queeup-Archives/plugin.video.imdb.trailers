@@ -238,9 +238,12 @@ class Main:
     p = __settings__('cpsPass')
     imdbID = self.arguments('imdbid')
 
+    def md5(_string):
+      return hashlib.md5(str(_string)).hexdigest()
+
     def get_api_key():
       if u and p:
-        apikey_url = 'http://%s:%s/getkey/?p=%s&u=%s' % (ip, port, self.md5(p), self.md5(u))
+        apikey_url = 'http://%s:%s/getkey/?p=%s&u=%s' % (ip, port, md5(p), md5(u))
       else:
         apikey_url = 'http://%s:%s/getkey/' % (ip, port)
       get_apikey = simplejson.load(urllib.urlopen(apikey_url))
@@ -257,9 +260,6 @@ class Main:
       self.notification(__language__(30108).encode('utf-8', 'ignore'), __language__(30109).encode('utf-8', 'ignore'))
     else:
       self.notification(__language__(30108).encode('utf-8', 'ignore'), __language__(30110).encode('utf-8', 'ignore'), displaytime=6000)
-
-  def md5(self, _string):
-    return hashlib.md5(str(_string)).hexdigest()
 
   def notification(self, title, message, image=__icon__, displaytime=5000):
     xbmc.executeJSONRPC('{"jsonrpc": "2.0", "method": "GUI.ShowNotification", "params": {"title": "%s", "message": "%s", "image": "%s", "displaytime": %i}, "id": "%s"}' % \

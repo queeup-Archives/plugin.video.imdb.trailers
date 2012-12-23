@@ -111,7 +111,7 @@ class Main:
       else:
         directors = directors[0]
       stars = video['overview']['stars']
-      duration = video['video']['duration']['string']
+      #duration = video['video']['duration']['string']
       fanart = video['video']['slateUrl']
       videoId = video['video']['videoId']
       title = video['display']['text'].replace('&#x26;', '&').replace('&#x27;', "'")
@@ -131,7 +131,7 @@ class Main:
                                    'year': int(year),
                                    'rating': float(rating),
                                    'mpaa': mpaa,
-                                   'duration': str(duration),
+                                   #'duration': str(duration),
                                    'director': directors.encode('utf-8', 'ignore'),
                                    'cast': stars})
       # dummy context menu variable
@@ -152,7 +152,7 @@ class Main:
     xbmcplugin.setContent(int(sys.argv[1]), 'movies')
     xbmcplugin.addSortMethod(int(sys.argv[1]), xbmcplugin.SORT_METHOD_UNSORTED)
     xbmcplugin.addSortMethod(int(sys.argv[1]), xbmcplugin.SORT_METHOD_VIDEO_TITLE)
-    xbmcplugin.addSortMethod(int(sys.argv[1]), xbmcplugin.SORT_METHOD_VIDEO_RUNTIME)
+    #xbmcplugin.addSortMethod(int(sys.argv[1]), xbmcplugin.SORT_METHOD_VIDEO_RUNTIME)
     xbmcplugin.addSortMethod(int(sys.argv[1]), xbmcplugin.SORT_METHOD_VIDEO_RATING)
     # End of directory...
     xbmcplugin.endOfDirectory(int(sys.argv[1]), True)

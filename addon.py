@@ -96,7 +96,7 @@ class Main:
       plot = video['overview']['plot']
       if not plot:
         plot = ''
-      # Check how to genre list
+      # TODO: Check how to genre list
       genres = video['overview']['genres'][0]
       mpaa = video['overview']['certificate']
       if not mpaa:
@@ -104,7 +104,7 @@ class Main:
       rating = video['overview']['user_rating']
       if not rating:
         rating = 0
-      # Check empty and list director list
+      # TODO: Check empty and list director list
       directors = video['overview']['directors']
       if len(directors) > 1:
         directors = '%s, %s' % (directors[0], directors[1])
@@ -146,13 +146,14 @@ class Main:
       url = sys.argv[0] + '?' + urllib.urlencode({'action': 'play',
                                                   'videoid': videoId})
       xbmcplugin.addDirectoryItem(int(sys.argv[1]), url, listitem, False)
-    # Sort methods and content type...
+    # next page listitem
     if next_page:
       listitem = xbmcgui.ListItem(__language__(30204), iconImage='DefaultVideo.png', thumbnailImage=__icon__)
       listitem.setProperty('fanart_image', __fanart__)
       url = sys.argv[0] + '?' + urllib.urlencode({'action': 'list',
                                                   'next_page': next_page_url})
       xbmcplugin.addDirectoryItem(int(sys.argv[1]), url, listitem, True)
+    # Sort methods and content type...
     xbmcplugin.setContent(int(sys.argv[1]), 'movies')
     xbmcplugin.addSortMethod(int(sys.argv[1]), xbmcplugin.SORT_METHOD_UNSORTED)
     xbmcplugin.addSortMethod(int(sys.argv[1]), xbmcplugin.SORT_METHOD_VIDEO_TITLE)

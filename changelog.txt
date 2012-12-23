@@ -1,5 +1,11 @@
 plugin.video.imdb.trailers:
 ---------------------------
+v2.0.4 (23.12.2012)
+-tormovies mailwarn removed
+-xbmc label2 duration removed.
+-params parse code changed.
+-use jsonrpc notification insted of executebuiltin
+
 v2.0.3 (23.12.2012)
 -fixed video link
 -fixed title

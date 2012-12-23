@@ -9,6 +9,7 @@ import tempfile
 import time
 import errno
 import sys
+import urlparse
 import urllib
 import urllib2
 import base64
@@ -70,8 +71,9 @@ class Main:
     for i in category:
       listitem = xbmcgui.ListItem(i['title'], iconImage='DefaultFolder.png', thumbnailImage=__icon__)
       listitem.setProperty('fanart_image', __fanart__)
-      parameters = '%s?action=list&key=%s' % (sys.argv[0], i['key'])
-      xbmcplugin.addDirectoryItems(int(sys.argv[1]), [(parameters, listitem, True)])
+      url = sys.argv[0] + '?' + urllib.urlencode({'action': 'list',
+                                                  'key': i['key']})
+      xbmcplugin.addDirectoryItems(int(sys.argv[1]), [(url, listitem, True)])
     # Sort methods and content type...
     xbmcplugin.addSortMethod(handle=int(sys.argv[1]), sortMethod=xbmcplugin.SORT_METHOD_NONE)
     # End of directory...
@@ -81,9 +83,9 @@ class Main:
     if DEBUG:
       self.log('content_list()')
     try:
-      contentUrl = self.arguments('next_page')
+      contentUrl = self.parameters('next_page')
     except:
-      contentUrl = CONTENT_URL % self.arguments('key')
+      contentUrl = CONTENT_URL % self.parameters('key')
     content = simplejson.loads(fetcher.fetch(contentUrl, CACHE_TIME))
     try:
       next_page_url = MAIN_URL + content['model']['next']
@@ -141,14 +143,16 @@ class Main:
       if __settings__('couchpotatoserver') == 'true':
         contextmenu += [(__language__(30108), 'XBMC.RunPlugin(%s?action=_couchpotatoserver&imdbid=%s)' % (sys.argv[0], imdbID))]
       listitem.addContextMenuItems(contextmenu, replaceItems=False)
-      parameters = '%s?action=play&videoid=%s' % (sys.argv[0], videoId)
-      xbmcplugin.addDirectoryItem(int(sys.argv[1]), parameters, listitem, False)
+      url = sys.argv[0] + '?' + urllib.urlencode({'action': 'play',
+                                                  'videoid': videoId})
+      xbmcplugin.addDirectoryItem(int(sys.argv[1]), url, listitem, False)
     # Sort methods and content type...
     if next_page:
       listitem = xbmcgui.ListItem(__language__(30204), iconImage='DefaultVideo.png', thumbnailImage=__icon__)
       listitem.setProperty('fanart_image', __fanart__)
-      parameters = '%s?action=list&next_page=%s' % (sys.argv[0], urllib.quote_plus(next_page_url))
-      xbmcplugin.addDirectoryItem(int(sys.argv[1]), parameters, listitem, True)
+      url = sys.argv[0] + '?' + urllib.urlencode({'action': 'list',
+                                                  'next_page': next_page_url})
+      xbmcplugin.addDirectoryItem(int(sys.argv[1]), url, listitem, True)
     xbmcplugin.setContent(int(sys.argv[1]), 'movies')
     xbmcplugin.addSortMethod(int(sys.argv[1]), xbmcplugin.SORT_METHOD_UNSORTED)
     xbmcplugin.addSortMethod(int(sys.argv[1]), xbmcplugin.SORT_METHOD_VIDEO_TITLE)
@@ -161,7 +165,7 @@ class Main:
     if DEBUG:
       self.log('get_video_url()')
     quality = __settings__("video_quality")
-    detailsUrl = DETAILS_PAGE % (self.arguments('videoid'), quality)
+    detailsUrl = DETAILS_PAGE % (self.parameters('videoid'), quality)
     if DEBUG:
       self.log('detailsURL: %s' % detailsUrl)
     details = urllib2.urlopen(detailsUrl).read()
@@ -257,9 +261,9 @@ class Main:
   def md5(self, _string):
     return hashlib.md5(str(_string)).hexdigest()
 
-  def arguments(self, arg):
-    _arguments = dict(part.split('=') for part in sys.argv[2][1:].split('&'))
-    return urllib.unquote_plus(_arguments[arg])
+  def parameters(self, arg):
+    _parameters = urlparse.parse_qs(urlparse.urlparse(sys.argv[2]).query)
+    return _parameters[arg][0]
 
   def log(self, description):
     xbmc.log("[ADD-ON] '%s v%s': %s" % (__plugin__, __version__, description), xbmc.LOGNOTICE)

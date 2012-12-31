@@ -44,8 +44,21 @@ CONTENT_URL = 'http://www.imdb.com/video/trailers/data/_ajax/adapter/shoveler?li
 OLD_DETAILS_PAGE = "http://www.imdb.com/video/imdb/%s/html5?format=%s"
 DETAILS_PAGE = "http://www.imdb.com/video/imdb/%s/imdbvideo?format=%s"
 
+# disable fanarts for speed on raspberry
+try:
+  if os.uname()[4].startswith('armv6'):
+    FANART = False
+    poster_res = ['_V1._SY256_.jpg', 'medium']
+  else:
+    FANART = True
+    poster_res = ['_V1._SY512_.jpg', 'large']
+except:
+  FANART = True
+  poster_res = ['_V1._SY512_.jpg', 'large']
+
 # Fanart
-xbmcplugin.setPluginFanart(int(sys.argv[1]), __fanart__)
+if FANART:
+  xbmcplugin.setPluginFanart(int(sys.argv[1]), __fanart__)
 
 
 # Main
@@ -70,7 +83,8 @@ class Main:
                 {'title':__language__(30203), 'key':'popular'}]
     for i in category:
       listitem = xbmcgui.ListItem(i['title'], iconImage='DefaultFolder.png', thumbnailImage=__icon__)
-      listitem.setProperty('fanart_image', __fanart__)
+      if FANART:
+        listitem.setProperty('fanart_image', __fanart__)
       url = sys.argv[0] + '?' + urllib.urlencode({'action': 'list',
                                                   'key': i['key']})
       xbmcplugin.addDirectoryItems(int(sys.argv[1]), [(url, listitem, True)])
@@ -114,18 +128,19 @@ class Main:
         directors = directors[0]
       stars = video['overview']['stars']
       #duration = video['video']['duration']['string']
-      fanart = video['video']['slateUrl']
+      art = video['video']['slateUrl']
       videoId = video['video']['videoId']
       title = video['display']['text'].replace('&#x26;', '&').replace('&#x27;', "'")
       year = video['display']['year']
       imdbID = video['display']['titleId']
       try:
-        poster = video['display']['poster']['url'].split('_V1._')[0] + '_V1._SY512_.jpg'
+        poster = video['display']['poster']['url'].split('_V1._')[0] + poster_res[0]
       except:
-        poster = 'http://i.media-imdb.com/images/nopicture/large/film_hd-gallery.png'
+        poster = 'http://i.media-imdb.com/images/nopicture/%s/film_hd-gallery.png' % poster_res[1]
 
       listitem = xbmcgui.ListItem(title, iconImage='DefaultVideo.png', thumbnailImage=poster)
-      listitem.setProperty('fanart_image', fanart)
+      if FANART:
+        listitem.setProperty('fanart_image', art)
       listitem.setInfo(type='video',
                        infoLabels={'title': title,
                                    'plot': plot,
@@ -149,7 +164,8 @@ class Main:
     # next page listitem
     if next_page:
       listitem = xbmcgui.ListItem(__language__(30204), iconImage='DefaultVideo.png', thumbnailImage=__icon__)
-      listitem.setProperty('fanart_image', __fanart__)
+      if FANART:
+        listitem.setProperty('fanart_image', __fanart__)
       url = sys.argv[0] + '?' + urllib.urlencode({'action': 'list',
                                                   'next_page': next_page_url})
       xbmcplugin.addDirectoryItem(int(sys.argv[1]), url, listitem, True)

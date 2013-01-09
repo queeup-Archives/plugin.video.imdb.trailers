@@ -1,5 +1,8 @@
 plugin.video.imdb.trailers:
 ---------------------------
+v2.0.5 (09.01.2013)
+-fix content list if there is no genre.
+
 v2.0.4 (23.12.2012)
 -tormovies mailwarn removed
 -xbmc label2 duration removed.

@@ -43,6 +43,7 @@ MAIN_URL = 'http://www.imdb.com'
 CONTENT_URL = 'http://www.imdb.com/video/trailers/data/_ajax/adapter/shoveler?list=%s&debug=0'
 OLD_DETAILS_PAGE = "http://www.imdb.com/video/imdb/%s/html5?format=%s"
 DETAILS_PAGE = "http://www.imdb.com/video/imdb/%s/imdbvideo?format=%s"
+USER_AGENT = 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.17 (KHTML, like Gecko) Chrome/24.0.1312.57 Safari/537.17'
 
 # disable fanarts for speed on raspberry
 try:
@@ -110,10 +111,10 @@ class Main:
       plot = video['overview']['plot']
       if not plot:
         plot = ''
-      # TODO: Check how to genre list
-      try:
-        genres = video['overview']['genres'][0]
-      except:
+      genrelist = video['overview']['genres']
+      if genrelist is not None:
+        genres = ', '.join(map(str, genrelist))
+      else:
         genres = ''
       mpaa = video['overview']['certificate']
       if not mpaa:
@@ -188,7 +189,9 @@ class Main:
     detailsUrl = DETAILS_PAGE % (self.parameters('videoid'), quality)
     if DEBUG:
       self.log('detailsURL: %s' % detailsUrl)
-    details = urllib2.urlopen(detailsUrl).read()
+    headers = { 'User-Agent' : USER_AGENT }
+    req = urllib2.Request(detailsUrl, None, headers)
+    details = urllib2.urlopen(req).read()
     videoUrl = re.findall('"url":"(.+?)"', details)[0]
     if DEBUG:
       self.log('videoURL: %s' % videoUrl)
@@ -324,7 +327,9 @@ class DiskCacheFetcher:
     # Retrieve over HTTP and cache, using rename to avoid collisions
     if DEBUG:
       print 'file not yet cached or cache time expired. File reading from URL and try to cache to disk'
-    data = urllib2.urlopen(url).read()
+    headers = { 'User-Agent' : USER_AGENT }
+    req = urllib2.Request(url, None, headers)
+    data = urllib2.urlopen(req).read()
     fd, temppath = tempfile.mkstemp()
     fp = os.fdopen(fd, 'w')
     fp.write(data)

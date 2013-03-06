@@ -189,7 +189,7 @@ class Main:
     detailsUrl = DETAILS_PAGE % (self.parameters('videoid'), quality)
     if DEBUG:
       self.log('detailsURL: %s' % detailsUrl)
-    headers = { 'User-Agent' : USER_AGENT }
+    headers = {'User-Agent': USER_AGENT}
     req = urllib2.Request(detailsUrl, None, headers)
     details = urllib2.urlopen(req).read()
     videoUrl = re.findall('"url":"(.+?)"', details)[0]
@@ -327,7 +327,7 @@ class DiskCacheFetcher:
     # Retrieve over HTTP and cache, using rename to avoid collisions
     if DEBUG:
       print 'file not yet cached or cache time expired. File reading from URL and try to cache to disk'
-    headers = { 'User-Agent' : USER_AGENT }
+    headers = {'User-Agent': USER_AGENT}
     req = urllib2.Request(url, None, headers)
     data = urllib2.urlopen(req).read()
     fd, temppath = tempfile.mkstemp()

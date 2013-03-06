@@ -1,5 +1,10 @@
 plugin.video.imdb.trailers:
 ---------------------------
+v2.0.6 (06.03.2013)
+-fixes Useragent filtering
+-add all genres as comma separated list
+-thanks to thomaswr.
+
 v2.0.5 (09.01.2013)
 -fix content list if there is no genre.
 

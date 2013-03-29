@@ -12,7 +12,6 @@ import sys
 import urlparse
 import urllib
 import urllib2
-import base64
 import simplejson
 import xbmc
 import xbmcgui
@@ -71,8 +70,6 @@ class Main:
       self.play()
     elif ("action=couchpotato" in sys.argv[2]):
       self.couchpotato()
-    elif ("action=_couchpotatoserver" in sys.argv[2]):
-      self.couchpotatoserver()
     else:
       self.main_menu()
 
@@ -158,9 +155,7 @@ class Main:
       # dummy context menu variable
       contextmenu = []
       if __settings__('couchpotato') == 'true':
-        contextmenu += [(__language__(30101), 'XBMC.RunPlugin(%s?action=couchpotato&imdbid=%s&year=%s)' % (sys.argv[0], imdbID, year))]
-      if __settings__('couchpotatoserver') == 'true':
-        contextmenu += [(__language__(30108), 'XBMC.RunPlugin(%s?action=_couchpotatoserver&imdbid=%s)' % (sys.argv[0], imdbID))]
+        contextmenu += [(__language__(30108), 'XBMC.RunPlugin(%s?action=_couchpotato&imdbid=%s)' % (sys.argv[0], imdbID))]
       listitem.addContextMenuItems(contextmenu, replaceItems=False)
       url = sys.argv[0] + '?' + urllib.urlencode({'action': 'play',
                                                   'videoid': videoId})
@@ -215,50 +210,11 @@ class Main:
   def couchpotato(self):
     if DEBUG:
       self.log('couchpotato(): Adding to CouchPotato')
-    # Quality Dialog
-    dialog = xbmcgui.Dialog()
-    ret = dialog.select('Choose a quality', ['1080p', '720p', 'BR-Rip', 'DVD-Rip', 'R5', 'Screener', 'DVD-R', 'Cam', 'TeleSync', 'TeleCine'])
 
     ip = __settings__('cpIP')
     port = __settings__('cpPort')
     u = __settings__('cpUser')
     p = __settings__('cpPass')
-
-    header = {}
-    if u and p:
-      header = {'Authorization': 'Basic ' + base64.b64encode(u + ':' + p)}
-
-    imdbID = self.parameters('imdbid')
-    year = self.parameters('year')
-
-    try:
-      query_args = {'id': imdbID, 'year': year}
-      post_args = {'quality': ret + 1, 'add': 'Add'}
-
-      encoded_query_args = urllib.urlencode(query_args)
-      encoded_post_args = urllib.urlencode(post_args)
-
-      request = urllib2.Request('http://%s:%s/movie/imdbAdd/?%s' % (ip, port, encoded_query_args), encoded_post_args, header)
-      add = urllib2.urlopen(request)
-
-      if add.read().find('added!'):
-        self.notification(__language__(30101).encode('utf-8', 'ignore'), __language__(30102).encode('utf-8', 'ignore'))
-      else:
-        self.notification(__language__(30101).encode('utf-8', 'ignore'), __language__(30103).encode('utf-8', 'ignore'), displaytime=6000)
-    except urllib2.URLError, e:
-      if e.code == 401:
-        self.notification(__language__(30101).encode('utf-8', 'ignore'), __language__(30104).encode('utf-8', 'ignore'), displaytime=6000)
-      else:
-        self.notification(__language__(30101).encode('utf-8', 'ignore'), __language__(30105).encode('utf-8', 'ignore'), displaytime=6000)
-
-  def couchpotatoserver(self):
-    if DEBUG:
-      self.log('couchpotatoserver(): Adding to CouchPotatoServer')
-
-    ip = __settings__('cpsIP')
-    port = __settings__('cpsPort')
-    u = __settings__('cpsUser')
-    p = __settings__('cpsPass')
     imdbID = self.parameters('imdbid')
 
     def md5(_string):

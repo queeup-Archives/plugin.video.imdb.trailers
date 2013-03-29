@@ -5,31 +5,23 @@
 
   <!-- Settings -->
   <string id="30001">Video Qualität</string>
-  <string id="30005">CouchPotato aktivieren</string>
-  <string id="30006">CouchPotato IP:</string>
-  <string id="30007">CouchPotato Port:</string>
-  <string id="30008">CouchPotato Username:</string>
-  <string id="30009">CouchPotato Passwort:</string>
-  <string id="30020">CouchPotatoServer aktivieren</string>
-  <string id="30021">CouchPotatoServer IP:</string>
-  <string id="30022">CouchPotatoServer Port:</string>
-  <string id="30023">CouchPotatoServer Username:</string>
-  <string id="30024">CouchPotatoServer Passwort:</string>
+  <string id="30020">CouchPotato aktivieren</string>
+  <string id="30021">CouchPotato IP:</string>
+  <string id="30022">CouchPotato Port:</string>
+  <string id="30023">CouchPotato Username:</string>
+  <string id="30024">CouchPotato Passwort:</string>
+  <string id="30025">Nur CouchPotatoServer (a.k.a V2) unterstützt</string>
   
   <!-- Settings Categories-->
   <string id="30301">Allgemein</string>
-  <string id="30302">CouchPotato</string>
-  <string id="30304">CouchPotatoServer</string> 
+  <string id="30304">CouchPotato</string> 
   
   <!-- Context Menu & Messages -->
-  <string id="30101">Zu CouchPotato hinzufügen</string>
-  <string id="30102">Erfolgreich zu CouchPotato hinzugefügt!</string>
-  <string id="30103">Fehler beim Hinzufügen zu CouchPotato!</string>
   <string id="30104">Keine Autorisierung. Bitte prüfe Username und Passwort.</string>
   <string id="30105">Unbekannter Fehler!</string>
-  <string id="30108">Zu CouchPotatoServer hinzufügen</string>
-  <string id="30109">Erfolgreich zu CouchPotatoServer hinzugefügt!</string>
-  <string id="30110">Fehler beim Hinzufügen zu CouchPotatoServer!</string>
+  <string id="30108">Zu CouchPotato hinzufügen</string>
+  <string id="30109">Erfolgreich zu CouchPotato hinzugefügt!</string>
+  <string id="30110">Fehler beim Hinzufügen zu CouchPotato!</string>
   
   <!-- Directory -->
   <string id="30201">Neue Trailer</string>

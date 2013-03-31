@@ -155,7 +155,7 @@ class Main:
       # dummy context menu variable
       contextmenu = []
       if __settings__('couchpotato') == 'true':
-        contextmenu += [(__language__(30108), 'XBMC.RunPlugin(%s?action=_couchpotato&imdbid=%s)' % (sys.argv[0], imdbID))]
+        contextmenu += [(__language__(30108), 'XBMC.RunPlugin(%s?action=couchpotato&imdbid=%s)' % (sys.argv[0], imdbID))]
       listitem.addContextMenuItems(contextmenu, replaceItems=False)
       url = sys.argv[0] + '?' + urllib.urlencode({'action': 'play',
                                                   'videoid': videoId})

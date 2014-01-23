@@ -19,7 +19,11 @@
     <summary lang="tr">IMDb Fragmanları video eklentisi</summary>
     <description>Watch movie trailers available on IMDb.</description>
     <description lang="tr">IMDb'de bulunan film fragmanlarını izle.</description>
-    <license>WTFPL</license>
+    <language>en</language>
     <platform>all</platform>
+    <license>WTFPL</license>
+    <forum>http://forum.xbmc.org/showthread.php?tid=95603</forum>
+    <website>http://www.imdb.com/</website>
+    <source>https://github.com/queeup/plugin.video.imdb.trailers</source>
   </extension>
 </addon>

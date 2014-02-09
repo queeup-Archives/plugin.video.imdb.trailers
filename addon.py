@@ -12,7 +12,10 @@ import sys
 import urlparse
 import urllib
 import urllib2
-import simplejson
+if sys.version_info >= (2, 7):
+    import json as _json
+else:
+    import simplejson as _json
 import xbmc
 import xbmcgui
 import xbmcplugin
@@ -98,7 +101,7 @@ class Main:
       contentUrl = self.parameters('next_page')
     except:
       contentUrl = CONTENT_URL % self.parameters('key')
-    content = simplejson.loads(fetcher.fetch(contentUrl, CACHE_TIME))
+    content = _json.loads(fetcher.fetch(contentUrl, CACHE_TIME))
     try:
       next_page_url = MAIN_URL + content['model']['next']
       next_page = True
@@ -225,7 +228,7 @@ class Main:
         apikey_url = 'http://%s:%s/getkey/?p=%s&u=%s' % (ip, port, md5(p), md5(u))
       else:
         apikey_url = 'http://%s:%s/getkey/' % (ip, port)
-      get_apikey = simplejson.load(urllib.urlopen(apikey_url))
+      get_apikey = _json.load(urllib.urlopen(apikey_url))
       if get_apikey['success']:
         return get_apikey['api_key']
       else:
@@ -235,7 +238,7 @@ class Main:
     encoded_query_args = urllib.urlencode(query_args)
     request = urllib2.Request('http://%s:%s/api/%s/movie.add/?%s' % (ip, port, get_api_key(), encoded_query_args))
     add = urllib2.urlopen(request)
-    if simplejson.load(add)['success']:
+    if _json.load(add)['success']:
       self.notification(__language__(30108).encode('utf-8', 'ignore'), __language__(30109).encode('utf-8', 'ignore'))
     else:
       self.notification(__language__(30108).encode('utf-8', 'ignore'), __language__(30110).encode('utf-8', 'ignore'), displaytime=6000)

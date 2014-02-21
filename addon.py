@@ -255,7 +255,7 @@ class Main:
     xbmc.log("[ADD-ON] '%s v%s': %s" % (__plugin__, __version__, description), xbmc.LOGNOTICE)
 
 
-class DiskCacheFetcher:
+class DiskCacheFetcher(Main):
   def __init__(self, cache_dir=None):
     # If no cache directory specified, use system temp directory
     if cache_dir is None:
@@ -281,11 +281,11 @@ class DiskCacheFetcher:
     if os.path.exists(filepath):
       if int(time.time()) - os.path.getmtime(filepath) < max_age:
         if DEBUG:
-          print 'file exists and reading from cache.'
+          self.log('file exists and reading from cache.')
         return open(filepath).read()
     # Retrieve over HTTP and cache, using rename to avoid collisions
     if DEBUG:
-      print 'file not yet cached or cache time expired. File reading from URL and try to cache to disk'
+      self.log('file not yet cached or cache time expired. File reading from URL and try to cache to disk')
     headers = {'User-Agent': USER_AGENT}
     req = urllib2.Request(url, None, headers)
     data = urllib2.urlopen(req).read()

@@ -132,7 +132,7 @@ class Main:
         directors = directors[0]
       stars = video['overview']['stars']
       # duration = video['video']['duration']['string']
-      art = video['video']['slateUrl']
+      # art = video['video']['slateUrl']
       videoId = video['video']['videoId']
       title = video['display']['text'].replace('&#x26;', '&').replace('&#x27;', "'")
       year = video['display']['year']
@@ -143,8 +143,8 @@ class Main:
         poster = 'http://i.media-imdb.com/images/nopicture/%s/film_hd-gallery.png' % poster_res[1]
 
       listitem = xbmcgui.ListItem(title, iconImage='DefaultVideo.png', thumbnailImage=poster)
-      if FANART:
-        listitem.setProperty('fanart_image', art)
+      # if FANART:
+      #  listitem.setProperty('fanart_image', art)
       listitem.setInfo(type='video',
                        infoLabels={'title': title,
                                    'plot': plot,
@@ -166,8 +166,8 @@ class Main:
     # next page listitem
     if next_page:
       listitem = xbmcgui.ListItem(__language__(30204), iconImage='DefaultVideo.png', thumbnailImage=__icon__)
-      if FANART:
-        listitem.setProperty('fanart_image', __fanart__)
+      # if FANART:
+      #  listitem.setProperty('fanart_image', __fanart__)
       url = sys.argv[0] + '?' + urllib.urlencode({'action': 'list',
                                                   'next_page': next_page_url})
       xbmcplugin.addDirectoryItem(int(sys.argv[1]), url, listitem, True)
